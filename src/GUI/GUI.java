@@ -19,10 +19,9 @@ public class GUI {
 	public GUI() {
 		//Janela de autenticacao
 		windowAutentication = new JFrame("Autenticacao");
-		windowAutentication.setSize(350, 150);
+//		windowAutentication.setSize(350, 150);
 		windowAutentication.setVisible(true);
 		windowAutentication.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//		windowAutentication.pack();
 		
 		//Janela de descricao do problema
 		windowProblem = new JFrame("Descricao do Problema");
@@ -31,6 +30,7 @@ public class GUI {
 		windowProblem.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
 		addcontent();
+		windowAutentication.pack();
 	}
 
 	private void addcontent() {
