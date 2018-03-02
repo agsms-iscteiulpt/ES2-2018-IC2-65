@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+import javax.swing.SwingConstants;
 
 public class GUI {
 	
@@ -36,17 +37,19 @@ public class GUI {
 		//Conteudo janela autenticacao
 		JPanel autenticacao_panel = new JPanel();
 		autenticacao_panel.setLayout(new BorderLayout());
-		windowAutentication.add(autenticacao_panel);
+		windowAutentication.getContentPane().add(autenticacao_panel);
 		
 		JPanel username_pass_panel = new JPanel();
-		username_pass_panel.setLayout(new GridLayout(2,2,3,5));
+		username_pass_panel.setLayout(new GridLayout(2,2));
 		autenticacao_panel.add(username_pass_panel, BorderLayout.CENTER);
 		
 		JLabel username_lb = new JLabel("Username: ");
+		username_lb.setHorizontalAlignment(SwingConstants.RIGHT);
 		username_pass_panel.add(username_lb);
 		JTextField username_tf = new JTextField();
 		username_pass_panel.add(username_tf);
 		JLabel password_lb = new JLabel("Password: ");
+		password_lb.setHorizontalAlignment(SwingConstants.RIGHT);
 		username_pass_panel.add(password_lb);
 		JTextField password_tf = new JTextField();
 		username_pass_panel.add(password_tf);
@@ -54,16 +57,10 @@ public class GUI {
 		JPanel admin_user_panel = new JPanel();
 		autenticacao_panel.add(admin_user_panel, BorderLayout.SOUTH);
 		
-		JLabel admin_jl = new JLabel("Administrador: ");
-		admin_user_panel.add(admin_jl);
-		JCheckBox admin_cb = new JCheckBox();
+		JCheckBox admin_cb = new JCheckBox("Administrador");
 		admin_user_panel.add(admin_cb);
-		JLabel user_jl = new JLabel("Utilizador: ");
-		admin_user_panel.add(user_jl);
-		JCheckBox user_cb = new JCheckBox();
+		JCheckBox user_cb = new JCheckBox("Utilizador");
 		admin_user_panel.add(user_cb);
-		
-		
 		
 	}
 	
