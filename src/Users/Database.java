@@ -16,9 +16,8 @@ public class Database {
 
 	@SuppressWarnings("resource")
 	private void read_database()  {	
-		Scanner scanner = null;
 		try {
-			scanner = new Scanner(new FileReader("Database.txt"))
+			Scanner scanner = new Scanner(new FileReader("Database.txt"))
 					.useDelimiter(" ");
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
@@ -41,6 +40,14 @@ public class Database {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public ArrayList<General_user> getAdmins() {
+		return Admins;
+	}
+	
+	public ArrayList<General_user> getUsers() {
+		return Users;
 	}
 
 }

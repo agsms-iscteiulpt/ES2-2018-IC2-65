@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -15,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
+import Users.*;
+
 public class GUI {
 
 	private JFrame windowAutentication;
@@ -23,7 +26,21 @@ public class GUI {
 	private JCheckBox admin_cb;
 	private JCheckBox user_cb;
 
+	private JTextField username_tf;
+	private JTextField password_tf;
+
+	@SuppressWarnings("unused")
+	private Database database;
+	private ArrayList<General_user> admins;
+	private ArrayList<General_user> users;
+
 	public GUI() {
+		Database database = new Database();
+
+		admins = database.getAdmins();
+		users = database.getUsers();
+
+
 		//Log in window
 		windowAutentication = new JFrame("Log in");
 		windowAutentication.setVisible(true);
@@ -61,11 +78,11 @@ public class GUI {
 
 		JLabel username_lb = new JLabel("Username: ");
 		label_panel.add(username_lb);
-		JTextField username_tf = new JTextField(12);
+		username_tf = new JTextField(12);
 		textfield_panel.add(username_tf);
 		JLabel password_lb = new JLabel("Password: ");
 		label_panel.add(password_lb);
-		JTextField password_tf = new JTextField(12);
+		password_tf = new JTextField(12);
 		textfield_panel.add(password_tf);
 
 		//1.2 Admin and user panel - checkbox
@@ -79,7 +96,7 @@ public class GUI {
 		user_cb = new JCheckBox("Utilizador");
 		button_group.add(user_cb);
 		admin_user_panel.add(user_cb);
-		
+
 		//1.3 Confirm and cancel panel
 		JPanel confirm_panel = new JPanel();
 		confirm_panel.setLayout(new GridLayout(1, 3));
@@ -89,29 +106,61 @@ public class GUI {
 		confirm_panel.add(cancel_button);
 		JButton confirm_button = new JButton("ok");
 		confirm_panel.add(confirm_button);
-		
+
 		cancel_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "You need to log in!");
 			}
 		});
-		
+
 		confirm_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(user_exists() == true) {
-					
+					JOptionPane.showMessageDialog(null, "Succeeded!");
 				} else {
-					JOptionPane.showMessageDialog(null, "Wrong password or username! Please try again!");
+					check_wrong_permissions();
 				}
-				
 			}
 		});
 	}
-	
+
 	// Checks if user has account
 	private boolean user_exists() {
+		if(admin_cb.isSelected()) {
+			for (General_user  admin: admins) {
+				if(admin.getUsername().equals(username_tf.getText()) && admin.getPassword().equals(password_tf.getText())) 
+					return true;
+			}
+		} else {
+			if(user_cb.isSelected()) {
+				for (General_user  user: users) {
+					if(user.getUsername().equals(username_tf.getText()) && user.getPassword().equals(password_tf.getText())) 
+						return true;
+				}
+			}
+		}
 		return false;
 	}
+
+	//Verifies if permissions are selected correctly
+	private void check_wrong_permissions() {
+		if(user_cb.isSelected()) {
+			for (General_user  admin: admins) {
+				if(admin.getUsername().equals(username_tf.getText()) && admin.getPassword().equals(password_tf.getText())) 
+					JOptionPane.showMessageDialog(null, "Wrong permissions! You're an administrator!");
+			}
+
+			if(admin_cb.isSelected()) {
+				for (General_user  user: users) {
+					if(user.getUsername().equals(username_tf.getText()) && user.getPassword().equals(password_tf.getText())) 
+						JOptionPane.showMessageDialog(null, "Wrong permissions! You are a user!");
+				}
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Wrong password or username! \n Please try again!");
+		}
+	}
+
 }
