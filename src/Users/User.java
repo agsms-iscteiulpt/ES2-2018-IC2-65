@@ -4,8 +4,8 @@ import javax.swing.JOptionPane;
 
 public class User extends General_user {
 
-	public User(String username, String password) {
-		super(username, password);
+	public User(String username, String password, String type) {
+		super(username, password, "U");
 	}
 
 	/**

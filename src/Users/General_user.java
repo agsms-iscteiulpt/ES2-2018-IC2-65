@@ -4,10 +4,12 @@ public class General_user {
 	
 	private String username;
 	private String password;
+	private String type;
 	
-	public General_user(String username, String password ) {
+	public General_user(String username, String password, String type) {
 		this.username = username;
 		this.password = password;
+		this.type = type;
 	}
 
 	/**
@@ -38,4 +40,8 @@ public class General_user {
 		this.username = username;
 	}
 
+	@Override
+	public String toString() {
+		return "[" + type + ", " + username + ", " + password + "]";
+	}
 }
