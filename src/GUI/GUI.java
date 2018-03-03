@@ -5,10 +5,12 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
@@ -70,24 +72,13 @@ public class GUI {
 		JPanel admin_user_panel = new JPanel();
 		autenticacao_panel.add(admin_user_panel, BorderLayout.CENTER);
 
+		ButtonGroup button_group = new ButtonGroup();
 		admin_cb = new JCheckBox("Administrador");
+		button_group.add(admin_cb);
 		admin_user_panel.add(admin_cb);
 		user_cb = new JCheckBox("Utilizador");
+		button_group.add(user_cb);
 		admin_user_panel.add(user_cb);
-//		isSelected();
-		
-//		ActionListener actionListener = new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				if (admin_cb.isSelected()){
-//					user_cb.setSelected(false);
-//				}else {
-//					if(user_cb.isSelected()) {
-//						admin_cb.setSelected(false);
-//					}
-//				}
-//			}
-//		};
 		
 		//1.3 Confirm and cancel panel
 		JPanel confirm_panel = new JPanel();
@@ -98,17 +89,29 @@ public class GUI {
 		confirm_panel.add(cancel_button);
 		JButton confirm_button = new JButton("ok");
 		confirm_panel.add(confirm_button);
+		
+		cancel_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "You need to log in!");
+			}
+		});
+		
+		confirm_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(user_exists() == true) {
+					
+				} else {
+					JOptionPane.showMessageDialog(null, "Wrong password or username! Please try again!");
+				}
+				
+			}
+		});
 	}
-
-//	private void isSelected() {
-//		if (admin_cb.isSelected()){
-//			user_cb.setSelected(false);
-//		}else {
-//			if(user_cb.isSelected()) {
-//				admin_cb.setSelected(false);
-//			}
-//		}
-//	}
-
-
+	
+	// Checks if user has account
+	private boolean user_exists() {
+		return false;
+	}
 }
