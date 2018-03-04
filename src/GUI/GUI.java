@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
@@ -27,7 +28,9 @@ public class GUI {
 	private JCheckBox user_cb;
 
 	private JTextField username_tf;
-	private JTextField password_tf;
+	//private JTextField password_tf;
+	
+	private JPasswordField password_pf;
 
 	@SuppressWarnings("unused")
 	private Database database;
@@ -82,8 +85,15 @@ public class GUI {
 		textfield_panel.add(username_tf);
 		JLabel password_lb = new JLabel("Password: ");
 		label_panel.add(password_lb);
-		password_tf = new JTextField(12);
-		textfield_panel.add(password_tf);
+		//password_tf = new JTextField(12);
+		//textfield_panel.add(password_tf);
+		
+		
+		
+		
+		password_pf = new JPasswordField(12);
+		textfield_panel.add(password_pf);
+		
 
 		//1.2 Admin and user panel - checkbox
 		JPanel admin_user_panel = new JPanel();
@@ -129,14 +139,14 @@ public class GUI {
 	// Checks if user has account
 	private boolean user_exists() {
 		if(admin_cb.isSelected()) {
-			for (General_user  admin: admins) {
-				if(admin.getUsername().equals(username_tf.getText()) && admin.getPassword().equals(password_tf.getText())) 
+			for (General_user  admin: admins) {														//alterei
+				if(admin.getUsername().equals(username_tf.getText()) && admin.getPassword().equals(password_pf.getText())) 
 					return true;
 			}
 		} else {
 			if(user_cb.isSelected()) {
-				for (General_user  user: users) {
-					if(user.getUsername().equals(username_tf.getText()) && user.getPassword().equals(password_tf.getText())) 
+				for (General_user  user: users) {													//alterei
+					if(user.getUsername().equals(username_tf.getText()) && user.getPassword().equals(password_pf.getText())) 
 						return true;
 				}
 			}
@@ -147,14 +157,14 @@ public class GUI {
 	//Verifies if permissions are selected correctly
 	private void check_wrong_permissions() {
 		if(user_cb.isSelected()) {
-			for (General_user  admin: admins) {
-				if(admin.getUsername().equals(username_tf.getText()) && admin.getPassword().equals(password_tf.getText())) 
+			for (General_user  admin: admins) {													//alterei
+				if(admin.getUsername().equals(username_tf.getText()) && admin.getPassword().equals(password_pf.getText())) 
 					JOptionPane.showMessageDialog(null, "Wrong permissions! You're an administrator!");
 			}
 
 			if(admin_cb.isSelected()) {
-				for (General_user  user: users) {
-					if(user.getUsername().equals(username_tf.getText()) && user.getPassword().equals(password_tf.getText())) 
+				for (General_user  user: users) {													//alterei
+					if(user.getUsername().equals(username_tf.getText()) && user.getPassword().equals(password_pf.getText())) 
 						JOptionPane.showMessageDialog(null, "Wrong permissions! You are a user!");
 				}
 			}
