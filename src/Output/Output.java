@@ -1,4 +1,4 @@
-package output;
+package Output;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -94,7 +94,7 @@ public class Output extends JFrame {
 		getContentPane().add(buttonPrintAll, BorderLayout.PAGE_END);
 	}
 
-	@SuppressWarnings("serial")
+//	@SuppressWarnings("serial")
 	private class MyChart extends JComponent {
 		ArrayList<Integer> chartList;
 
@@ -194,7 +194,7 @@ public class Output extends JFrame {
 			return tableData[row][col];
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
 		public Class getColumnClass(int c) {
 			return getValueAt(0, c).getClass();

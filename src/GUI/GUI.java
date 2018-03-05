@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
@@ -23,13 +26,12 @@ public class GUI {
 
 	private JFrame windowAutentication;
 	private JFrame windowProblem;
+	private JFrame windowHelp;
 
 	private JCheckBox admin_cb;
 	private JCheckBox user_cb;
 
 	private JTextField username_tf;
-	//private JTextField password_tf;
-	
 	private JPasswordField password_pf;
 
 	@SuppressWarnings("unused")
@@ -43,33 +45,29 @@ public class GUI {
 		admins = database.getAdmins();
 		users = database.getUsers();
 
+		login_window();
+		problem_description_window();
+		help_window();
+		
+		windowAutentication.pack();
+	}
 
+	private void login_window() {
 		//Log in window
 		windowAutentication = new JFrame("Log in");
 		windowAutentication.setVisible(true);
 		windowAutentication.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		windowAutentication.setLocationRelativeTo(null);
 
-		//Problem description window
-		windowProblem = new JFrame("Problem description");
-		windowProblem.setSize(1000, 650);
-		//windowProblem.setVisible(true);
-		windowProblem.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		addcontent();
-		windowAutentication.pack();
-	}
-
-	private void addcontent() {
-		//1. Log in window
-		JPanel autenticacao_panel = new JPanel();
-		autenticacao_panel.setLayout(new BorderLayout());
-		windowAutentication.getContentPane().add(autenticacao_panel);
+		//1. Log in window panel
+		JPanel login_panel = new JPanel();
+		login_panel.setLayout(new BorderLayout());
+		windowAutentication.add(login_panel);
 
 		//1.1 Username and password panel
 		JPanel username_pass_panel = new JPanel();
 		username_pass_panel.setLayout(new BorderLayout());
-		autenticacao_panel.add(username_pass_panel, BorderLayout.NORTH);
+		login_panel.add(username_pass_panel, BorderLayout.NORTH);
 
 		JPanel label_panel = new JPanel();
 		label_panel.setLayout(new GridLayout(2, 1));
@@ -85,19 +83,12 @@ public class GUI {
 		textfield_panel.add(username_tf);
 		JLabel password_lb = new JLabel("Password: ");
 		label_panel.add(password_lb);
-		//password_tf = new JTextField(12);
-		//textfield_panel.add(password_tf);
-		
-		
-		
-		
 		password_pf = new JPasswordField(12);
 		textfield_panel.add(password_pf);
-		
 
 		//1.2 Admin and user panel - checkbox
 		JPanel admin_user_panel = new JPanel();
-		autenticacao_panel.add(admin_user_panel, BorderLayout.CENTER);
+		login_panel.add(admin_user_panel, BorderLayout.CENTER);
 
 		ButtonGroup button_group = new ButtonGroup();
 		admin_cb = new JCheckBox("Administrador");
@@ -110,7 +101,7 @@ public class GUI {
 		//1.3 Confirm and cancel panel
 		JPanel confirm_panel = new JPanel();
 		confirm_panel.setLayout(new GridLayout(1, 3));
-		autenticacao_panel.add(confirm_panel, BorderLayout.SOUTH);
+		login_panel.add(confirm_panel, BorderLayout.SOUTH);
 
 		JButton cancel_button = new JButton("cancel");
 		confirm_panel.add(cancel_button);
@@ -129,6 +120,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				if(user_exists() == true) {
 					JOptionPane.showMessageDialog(null, "Succeeded!");
+					windowProblem.setVisible(true);
 				} else {
 					check_wrong_permissions();
 				}
@@ -137,15 +129,16 @@ public class GUI {
 	}
 
 	// Checks if user has account
+	@SuppressWarnings("deprecation")
 	private boolean user_exists() {
 		if(admin_cb.isSelected()) {
-			for (General_user  admin: admins) {														//alterei
+			for (General_user  admin: admins) {														
 				if(admin.getUsername().equals(username_tf.getText()) && admin.getPassword().equals(password_pf.getText())) 
 					return true;
 			}
 		} else {
 			if(user_cb.isSelected()) {
-				for (General_user  user: users) {													//alterei
+				for (General_user  user: users) {													
 					if(user.getUsername().equals(username_tf.getText()) && user.getPassword().equals(password_pf.getText())) 
 						return true;
 				}
@@ -155,15 +148,16 @@ public class GUI {
 	}
 
 	//Verifies if permissions are selected correctly
+	@SuppressWarnings("deprecation")
 	private void check_wrong_permissions() {
 		if(user_cb.isSelected()) {
-			for (General_user  admin: admins) {													//alterei
+			for (General_user  admin: admins) {													
 				if(admin.getUsername().equals(username_tf.getText()) && admin.getPassword().equals(password_pf.getText())) 
 					JOptionPane.showMessageDialog(null, "Wrong permissions! You're an administrator!");
 			}
 
 			if(admin_cb.isSelected()) {
-				for (General_user  user: users) {													//alterei
+				for (General_user  user: users) {													
 					if(user.getUsername().equals(username_tf.getText()) && user.getPassword().equals(password_pf.getText())) 
 						JOptionPane.showMessageDialog(null, "Wrong permissions! You are a user!");
 				}
@@ -171,6 +165,93 @@ public class GUI {
 		} else {
 			JOptionPane.showMessageDialog(null, "Wrong password or username! \n Please try again!");
 		}
+	}
+
+	private void problem_description_window() {
+		//Problem description window
+		windowProblem = new JFrame("Problem description");
+		windowProblem.setSize(600, 350);
+		windowProblem.setLocationRelativeTo(null);
+		//windowProblem.setVisible(true);
+		windowProblem.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
+		//1. Problem description panel
+		JPanel windowProblem_panel = new JPanel();
+		windowProblem_panel.setLayout(new BorderLayout());
+		windowProblem.add(windowProblem_panel);
+		
+		//1.1. Problem panel
+		JPanel problem_panel = new JPanel();
+		problem_panel.setLayout(new BorderLayout());
+		windowProblem_panel.add(problem_panel, BorderLayout.NORTH);
+		
+		JLabel problem_lb = new JLabel("    Problem:  ");
+		problem_panel.add(problem_lb, BorderLayout.WEST);
+		JTextField problem_tf = new JTextField();
+		problem_panel.add(problem_tf, BorderLayout.CENTER);
+		
+		//1.2. Problem description panel
+		JPanel problemDescription_panel = new JPanel();
+		problemDescription_panel.setLayout(new BorderLayout());
+		windowProblem_panel.add(problemDescription_panel, BorderLayout.CENTER);
+		
+		JLabel problemDescription_lb = new JLabel(" Description: ");
+		problemDescription_panel.add(problemDescription_lb, BorderLayout.WEST);
+		JTextArea problemDescription_tf = new JTextArea();
+		problemDescription_panel.add(problemDescription_tf, BorderLayout.CENTER);
+		
+		//1.3. Help and Continue panel - Buttons
+		JPanel help_continue_panel = new JPanel();
+		help_continue_panel.setLayout(new BorderLayout());
+		problemDescription_panel.add(help_continue_panel, BorderLayout.SOUTH);
+		
+		JButton help_button = new JButton("Help");
+		help_button.setForeground(Color.RED);
+		help_continue_panel.add(help_button, BorderLayout.WEST);
+		JButton confirm_button = new JButton("Confirm ➜");
+		help_continue_panel.add(confirm_button, BorderLayout.EAST);
+		
+		help_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+//				JOptionPane.showMessageDialog(null, "Help!");
+				windowHelp.setVisible(true);
+			}
+		});
+		
+		confirm_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Confirmed!");
+			}
+		});
+	}
+	
+	private void help_window () {
+		//Help window
+		windowHelp = new JFrame("Help");
+		windowHelp.setSize(600, 350);
+		windowHelp.setLocationRelativeTo(null);
+		//windowHelp.setVisible(true);
+		windowHelp.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
+		//1. Help panel - Tab's
+		JTabbedPane help_tp =new JTabbedPane();
+		windowHelp.add(help_tp);
+		
+		JPanel frequent_questions_panel = new JPanel();
+		JPanel email_panel = new JPanel();
+		
+		help_tp.add("Frequent Questions", frequent_questions_panel);
+		help_tp.add("E-mail", email_panel);
+		
+		//1.1. Frequent Questions
+		frequentQuestions();
+		
+	}
+	
+	private void frequentQuestions() {
+		
 	}
 
 }
