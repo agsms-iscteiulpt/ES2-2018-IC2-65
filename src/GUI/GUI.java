@@ -20,10 +20,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import FrequentQuestions.FrequentQuestions;
-import FrequentQuestions.Read_FrequentQuestions;
-import Users.Database;
-import Users.General_user;
+import Email.*;
+import FrequentQuestions.*;
+import Users.*;
 
 public class GUI {
 
@@ -297,12 +296,24 @@ public class GUI {
 		JTextArea body_tf = new JTextArea();
 		body_panel.add(body_tf, BorderLayout.CENTER);
 		
-		
+		//...
 		JPanel email_button_panel = new JPanel();
 		email_button_panel.setLayout(new BorderLayout());
 		email_panel.add(email_button_panel, BorderLayout.SOUTH);
 		
 		JButton send_button = new JButton("Send");
 		email_button_panel.add(send_button, BorderLayout.EAST);
+		
+		send_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(from_tf.getText().equals("") || subject_tf.getText().equals("") || body_tf.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Fields can not be empty.");
+				} else {
+					@SuppressWarnings("unused")
+					Send_Email send_Email = new Send_Email(from_tf.getText(), subject_tf.getText(), body_tf.getText());
+				}
+			}
+		});
 	}
 }

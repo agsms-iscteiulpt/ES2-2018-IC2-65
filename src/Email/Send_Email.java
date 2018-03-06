@@ -8,9 +8,10 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.swing.JOptionPane;
 
 public class Send_Email {
-	public Send_Email() {
+	public Send_Email(String email, String subject, String text) {
 		final String username = "mafalda.ambc@gmail.com";
 		final String password = "mafalda1996";
 		
@@ -33,13 +34,14 @@ public class Send_Email {
 			message.setFrom(new InternetAddress("mafalda.ambc@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse("mambc@iscte-iul.pt"));
-			message.setSubject("Testing Subject");
-			message.setText("Dear Mail, \n\n this is just a test! " +
-					"\n\n No spam to my email, please!");
+			message.setSubject(subject);
+			message.setText(text);
 
 			Transport.send(message);
+			
+			JOptionPane.showMessageDialog(null, "E-mail successfully sent!");
 
-			System.out.println("Done");
+			System.out.println("Email sent!");
 
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
