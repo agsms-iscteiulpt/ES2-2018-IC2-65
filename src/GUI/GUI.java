@@ -20,6 +20,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
+import Email.*;
+import FrequentQuestions.*;
 import Users.*;
 
 public class GUI {
@@ -241,17 +243,77 @@ public class GUI {
 		
 		JPanel frequent_questions_panel = new JPanel();
 		JPanel email_panel = new JPanel();
+		email_panel.setLayout(new BorderLayout());
 		
 		help_tp.add("Frequent Questions", frequent_questions_panel);
-		help_tp.add("E-mail", email_panel);
+		help_tp.add("Question by E-mail", email_panel);
 		
 		//1.1. Frequent Questions
-		frequentQuestions();
+		Read_FrequentQuestions read_fq = new Read_FrequentQuestions();
 		
-	}
-	
-	private void frequentQuestions() {
+		ArrayList<FrequentQuestions> frequentQuestions = read_fq.getFrequentQuestions();
 		
+		int n_questions = frequentQuestions.size();
+		
+		frequent_questions_panel.setLayout(new GridLayout(n_questions, 1));
+		
+		for (FrequentQuestions fq : frequentQuestions) {
+			JButton fq_button = new JButton(fq.getNumber() + " " + fq.getQuestion());
+			frequent_questions_panel.add(fq_button);
+			
+			fq_button.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JOptionPane.showMessageDialog(null, "Resposta: " + fq.getAnswer());
+				}
+			});
+		}
+		
+		//1.2. Question by E-mail 
+		JPanel email_tf_panel = new JPanel();
+		email_tf_panel.setLayout(new BorderLayout());
+		email_panel.add(email_tf_panel, BorderLayout.NORTH);
+		
+		JPanel from_panel = new JPanel();
+		from_panel.setLayout(new BorderLayout());
+		email_tf_panel.add(from_panel, BorderLayout.NORTH);
+		JLabel from_jl = new JLabel("From:     ");
+		from_panel.add(from_jl, BorderLayout.WEST);
+		JTextField from_tf = new JTextField();
+		from_panel.add(from_tf, BorderLayout.CENTER);
+		
+		JPanel subject_panel = new JPanel();
+		subject_panel.setLayout(new BorderLayout());
+		email_tf_panel.add(subject_panel, BorderLayout.CENTER);
+		JLabel subject_jl = new JLabel("Subject: ");
+		subject_panel.add(subject_jl, BorderLayout.WEST);
+		JTextField subject_tf = new JTextField();
+		subject_panel.add(subject_tf, BorderLayout.CENTER);
+		
+		JPanel body_panel = new JPanel();
+		body_panel.setLayout(new BorderLayout());
+		email_panel.add(body_panel, BorderLayout.CENTER);
+		JTextArea body_tf = new JTextArea();
+		body_panel.add(body_tf, BorderLayout.CENTER);
+		
+		//...
+		JPanel email_button_panel = new JPanel();
+		email_button_panel.setLayout(new BorderLayout());
+		email_panel.add(email_button_panel, BorderLayout.SOUTH);
+		
+		JButton send_button = new JButton("Send");
+		email_button_panel.add(send_button, BorderLayout.EAST);
+		
+		send_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(from_tf.getText().equals("") || subject_tf.getText().equals("") || body_tf.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Fields can not be empty.");
+				} else {
+					@SuppressWarnings("unused")
+					Send_Email send_Email = new Send_Email(from_tf.getText(), subject_tf.getText(), body_tf.getText());
+				}
+			}
+		});
 	}
-
 }

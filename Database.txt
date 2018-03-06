@@ -1,4 +1,4 @@
-A mambc@iscte-iul.pt mafalda
-A spgao@iscte-iul.pt sonia
-U agsms@iscte-iul.pt alexandre
-U ana@iscte-iul.pt ana
+A mambc mafalda
+A spgao sonia
+U agsms alexandre
+U ana ana
