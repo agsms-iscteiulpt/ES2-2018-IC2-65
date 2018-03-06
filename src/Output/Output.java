@@ -99,7 +99,7 @@ public class Output extends JFrame {
 		public void updateList(ArrayList<Integer> l) {
 			System.out.println("updateList()");
 
-			chartList = l;
+			chartList =  l;
 			repaint();
 		}
 
