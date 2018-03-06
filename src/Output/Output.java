@@ -38,8 +38,8 @@ public class Output extends JFrame {
 
 	private static void createAndShowGUI() {
 		Output myFrame = new Output();
-		myFrame.setTitle("java-buddy.blogspot.com");
-		myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		myFrame.setTitle("Output");
+		myFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		myFrame.prepareUI();
 		myFrame.pack();
 		myFrame.setVisible(true);
@@ -59,13 +59,13 @@ public class Output extends JFrame {
 
 		jTable.setFillsViewportHeight(true);
 		JScrollPane jScrollPane = new JScrollPane(jTable);
-		jScrollPane.setPreferredSize(new Dimension(450, 100));
+		jScrollPane.setPreferredSize(new Dimension(600, 250));
 		vPanel.add(jScrollPane);
 
 		labelInfo = new Label();
 		vPanel.add(labelInfo);
 
-		Button buttonPrintAll = new Button("Print All");
+		Button buttonPrintAll = new Button("Print Results");
 		buttonPrintAll.addActionListener(new ActionListener() {
 
 			@Override
@@ -74,9 +74,7 @@ public class Output extends JFrame {
 				for (int i = 0; i < jTable.getRowCount(); i++) {
 					for (int j = 0; j < jTable.getColumnCount(); j++) {
 						String val = String.valueOf(jTable.getValueAt(i, j));
-						System.out.print(val + "\t");
 					}
-					System.out.println();
 				}
 
 				// Create ListArray for the first row
@@ -94,7 +92,7 @@ public class Output extends JFrame {
 		getContentPane().add(buttonPrintAll, BorderLayout.PAGE_END);
 	}
 
-//	@SuppressWarnings("serial")
+	// @SuppressWarnings("serial")
 	private class MyChart extends JComponent {
 		ArrayList<Integer> chartList;
 
@@ -107,8 +105,6 @@ public class Output extends JFrame {
 
 		@Override
 		public void paint(Graphics g) {
-			System.out.println("paint()");
-
 			if (chartList != null) {
 				paintMe(g);
 			}
@@ -170,9 +166,7 @@ public class Output extends JFrame {
 	class MyTableModel extends AbstractTableModel {
 		private String[] Algoritms = { "1", "2", "3", "4", "5", "6", "7" };
 
-		private Object[][] tableData = { { 1, 2, 3, 4, 5, 6, 7 }, { 4, 3, 2, 1, 7, 6, 5 },
-				{ 12, 20, 13, 14, 11, 24, 56 }, { 13, 29, 23, 24, 25, 21, 20 }, { 2, 4, 6, 8, 10, 12, 14 },
-				{ 11, 21, 33, 4, 9, 5, 4 } };
+		private Object[][] tableData = { { 1, 9, 2, 8, 3, 7, 6 } };
 
 		@Override
 		public int getColumnCount() {
