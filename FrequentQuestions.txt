@@ -2,4 +2,4 @@
 2./Qual o formato aceitável para escrever o nome do problema? /O formato aceitável para o nome do problema é o seguido pelas conveções ou restições usadas para o nome de classes em java.
 3./O que é a descrição? /É uma descrição textual em, lingua natural, sobre o problema de optimização que pretende resolver.
 4./Separador "Question by E-mail". /O utilizador deverá o indicar os eu endereço de email, para que lhe sejam enviadas menssagens com informções de ajuda ou receber indicações sobre o progresso do processo da optimização que solicitou através da plataforma.
-5.//R
+5./P/R
