@@ -33,7 +33,7 @@ public class Send_Email {
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress("mafalda.ambc@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse("mambc@iscte-iul.pt"));
+					InternetAddress.parse(email));
 			message.setSubject(subject);
 			message.setText(text);
 
