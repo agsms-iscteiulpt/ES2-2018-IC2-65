@@ -28,7 +28,7 @@ public class Send_Email {
 					return new PasswordAuthentication(username,password); //username and password
 				}
 			});
-
+ 
 		try {
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress("mafalda.ambc@gmail.com"));
