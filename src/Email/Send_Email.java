@@ -33,9 +33,27 @@ public class Send_Email {
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress("mafalda.ambc@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
+					InternetAddress.parse("mafalda.ambc@gmail.com"));
+			message.setSubject(subject);
+			message.setText("Esta mensagem foi enviada pelo utilizador com o email: " + email + "\n" + text);
+
+			Transport.send(message);
+			
+//			JOptionPane.showMessageDialog(null, "E-mail successfully sent!");
+
+//			System.out.println("Email sent!");
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
+		
+		try {
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("mafalda.ambc@gmail.com"));
+			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse(email));
 			message.setSubject(subject);
-			message.setText(text);
+			message.setText("Enviou a seguinte mensagem para o administrador da plataforma de otimização: " + "\n" + text);
 
 			Transport.send(message);
 			
@@ -46,5 +64,6 @@ public class Send_Email {
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
+		
 	}
 }
