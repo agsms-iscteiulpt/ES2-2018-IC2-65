@@ -64,6 +64,6 @@ public class Send_Email {
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
-		
+		 
 	}
 }
