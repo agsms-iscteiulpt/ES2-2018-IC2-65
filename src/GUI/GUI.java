@@ -419,20 +419,27 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {				
 				boolean number = false;
+//				String n_variables_String = nVariable_tf.getText();
 				while(number == false) {
 					String n_variables_String = nVariable_tf.getText();
+					int n_variables = Integer.parseInt(n_variables_String);
 					if (n_variables_String.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
-						int n_variables = Integer.parseInt(n_variables_String);
+//						int n_variables = Integer.parseInt(n_variables_String);
 						table_rows = n_variables;
 						variable_table_data();
 						variableName_table_data();
 						number = true;
+						System.out.println("asd");
 					} else {
 						number = false;
 						JOptionPane.showMessageDialog(null, "It's not a number!");
+						System.out.println("qweasd");
 					}
-					number = true;
+//					number = true;
+//					System.out.println("iuoo");
 				}	
+//				number = true;
+//				System.out.println("iuoo");
 				//				JOptionPane.showMessageDialog(null, "OK!");
 				//				windowAlgoritm.setVisible(true);
 			}

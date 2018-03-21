@@ -23,14 +23,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
-@SuppressWarnings("serial")
+
 public class Output extends JFrame {
 
 	Label labelInfo;
 	JTable jTable;
 
 	public static void main(String[] args) {
-
 		SwingUtilities.invokeLater(() -> {
 			createAndShowGUI();
 		});
@@ -46,37 +45,30 @@ public class Output extends JFrame {
 	}
 
 	private void prepareUI() {
-
 		JPanel vPanel = new JPanel();
 		vPanel.setLayout(new BoxLayout(vPanel, BoxLayout.Y_AXIS));
-
 		MyChart myChart = new MyChart();
 		myChart.setPreferredSize(new Dimension(450, 200));
-
 		jTable = new JTable(new MyTableModel());
 		jTable.getSelectionModel().addListSelectionListener(new MyRowColListener());
 		jTable.getColumnModel().getSelectionModel().addListSelectionListener(new MyRowColListener());
-
 		jTable.setFillsViewportHeight(true);
 		JScrollPane jScrollPane = new JScrollPane(jTable);
 		jScrollPane.setPreferredSize(new Dimension(600, 250));
 		vPanel.add(jScrollPane);
-
 		labelInfo = new Label();
 		vPanel.add(labelInfo);
-
 		Button buttonPrintAll = new Button("Print Results");
 		buttonPrintAll.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println();
 				for (int i = 0; i < jTable.getRowCount(); i++) {
 					for (int j = 0; j < jTable.getColumnCount(); j++) {
+						@SuppressWarnings("unused")
 						String val = String.valueOf(jTable.getValueAt(i, j));
 					}
 				}
-
 				// Create ListArray for the first row
 				// and update MyChart
 				ArrayList<Integer> l = new ArrayList<>();
@@ -86,19 +78,17 @@ public class Output extends JFrame {
 				myChart.updateList(l);
 			}
 		});
-
 		getContentPane().add(myChart, BorderLayout.PAGE_START);
 		getContentPane().add(vPanel, BorderLayout.CENTER);
 		getContentPane().add(buttonPrintAll, BorderLayout.PAGE_END);
 	}
 
 	// @SuppressWarnings("serial")
+	@SuppressWarnings("serial")
 	private class MyChart extends JComponent {
 		ArrayList<Integer> chartList;
 
 		public void updateList(ArrayList<Integer> l) {
-			System.out.println("updateList()");
-
 			chartList =  l;
 			repaint();
 		}
@@ -106,22 +96,18 @@ public class Output extends JFrame {
 		@Override
 		public void paint(Graphics g) {
 			if (chartList != null) {
-				paintMe(g);
+				paintMaster(g);
 			}
 		}
 
-		private void paintMe(Graphics g) {
+		private void paintMaster(Graphics g) {
 			Graphics2D graphics2d = (Graphics2D) g;
-			graphics2d.setColor(Color.blue);
-
+			graphics2d.setColor(Color.pink);
 			int width = getWidth();
 			int height = getHeight();
-
 			float hDiv = (float) width / (float) (chartList.size() - 1);
 			float vDiv = (float) height / (float) (Collections.max(chartList));
-
 			for (int i = 0; i < chartList.size() - 1; i++) {
-
 				int value1, value2;
 				if (chartList.get(i) == null) {
 					value1 = 0;
@@ -133,41 +119,32 @@ public class Output extends JFrame {
 				} else {
 					value2 = chartList.get(i + 1);
 				}
-
 				graphics2d.drawLine((int) (i * hDiv), height - ((int) (value1 * vDiv)), (int) ((i + 1) * hDiv),
 						height - ((int) (value2 * vDiv)));
 			}
-
 			graphics2d.drawRect(0, 0, width, height);
 		}
 
 	}
 
 	private class MyRowColListener implements ListSelectionListener {
-
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			System.out.println("valueChanged: " + e.toString());
-
 			if (!e.getValueIsAdjusting()) {
-
 				int row = jTable.getSelectedRow();
 				int col = jTable.getSelectedColumn();
-
 				if (row >= 0 && col >= 0) {
 					int selectedItem = (int) jTable.getValueAt(row, col);
 					labelInfo.setText("MyRowListener: " + row + " : " + col + " = " + selectedItem);
 				}
-
 			}
 		}
 	}
 
 	class MyTableModel extends AbstractTableModel {
 		private String[] Algoritms = { "1", "2", "3", "4", "5", "6", "7" };
-
 		private Object[][] tableData = { { 1, 9, 2, 8, 3, 7, 6 } };
-
 		@Override
 		public int getColumnCount() {
 			return Algoritms.length;
@@ -204,6 +181,5 @@ public class Output extends JFrame {
 			tableData[row][col] = value;
 			fireTableCellUpdated(row, col);
 		}
-
 	}
 }
