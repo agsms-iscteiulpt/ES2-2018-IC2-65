@@ -4,10 +4,10 @@ import java.io.IOException;
 
 public class OptimizationProcess {
 	
-/* O conjunto de algoritmos adequados a cada tipo de problema est�o indicados aqui */
-	String[] AlgorithsForDoubleProblemType = new String[]{"NSGAII","SMSEMOA","GDE3","IBEA","MOCell","MOEAD","PAES","RandomSearch"};
-	String[] AlgorithsForIntegerProblemType = new String[]{"NSGAII","SMSEMOA","MOCell","PAES","RandomSearch"};
-	String[] AlgorithsForBinaryProblemType = new String[]{"NSGAII","SMSEMOA","MOCell","MOCH","PAES","RandomSearch","SPEA2"};	
+ /* O conjunto de algoritmos adequados a cada tipo de problema est�o indicados aqui */
+	static String[] AlgorithsForDoubleProblemType = new String[]{"NSGAII","SMSEMOA","GDE3","IBEA","MOCell","MOEAD","PAES","RandomSearch"};
+	static String[] AlgorithsForIntegerProblemType = new String[]{"NSGAII","SMSEMOA","MOCell","PAES","RandomSearch"};
+	static String[] AlgorithsForBinaryProblemType = new String[]{"NSGAII","SMSEMOA","MOCell","MOCH","PAES","RandomSearch","SPEA2"};	
 
 	public static void main(String[] args) {
 		try {
@@ -29,4 +29,16 @@ public class OptimizationProcess {
 			e.printStackTrace();
 		}
 	} 
+	
+	public static String[] getAlgorithsForBinaryProblemType() {
+		return AlgorithsForBinaryProblemType;
+	}
+	
+	public static String[] getAlgorithsForDoubleProblemType() {
+		return AlgorithsForDoubleProblemType;
+	}
+	
+	public static String[] getAlgorithsForIntegerProblemType() {
+		return AlgorithsForIntegerProblemType;
+	}
 }

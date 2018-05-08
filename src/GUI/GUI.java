@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -13,12 +14,14 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -27,21 +30,26 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
 import javax.swing.table.DefaultTableModel;
 
 import Email.*;
 import FrequentQuestions.*;
 import Users.*;
+import jMetal.*;
 
-public class GUI {
+public class GUI implements ActionListener {
 
 	private JFrame windowAutentication;
 	private JFrame windowProblem;
 	private JFrame windowHelp;
 	private JFrame windowAlgoritm;
+	private JFrame windowDecisionVariable;
 
 	private JPanel algoritm_panel;
-	private JPanel tables_panel;
+	private JPanel problemType_and_Algoritms_panel;
+	private JPanel ProblemAlgoritms_panel;
+	private JPanel decisionVariable_panel;
 
 	private JCheckBox admin_cb;
 	private JCheckBox user_cb;
@@ -59,7 +67,7 @@ public class GUI {
 	private ArrayList<General_user> admins;
 	private ArrayList<General_user> users;
 
-
+	String[] ProblemType = new String[]{"Binary", "Double", "Integer"};
 
 	public GUI() {
 		Database database = new Database();
@@ -198,7 +206,6 @@ public class GUI {
 		windowProblem = new JFrame("Problem description");
 		windowProblem.setSize(600, 350);
 		windowProblem.setLocationRelativeTo(null);
-		//windowProblem.setVisible(true);
 		windowProblem.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		//1. Problem description panel
@@ -240,7 +247,6 @@ public class GUI {
 		help_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//				JOptionPane.showMessageDialog(null, "Help!");
 				windowHelp.setVisible(true);
 			}
 		});
@@ -248,22 +254,20 @@ public class GUI {
 		confirm_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//				JOptionPane.showMessageDialog(null, "Confirmed!");
-
-				boolean number = false;
-				while(number == false) {
-					String n_variables_String = JOptionPane.showInputDialog("How many variables?");
-					if (n_variables_String.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
-						int n_variables = Integer.parseInt(n_variables_String);
-						table_rows = n_variables;
-						variable_table_data();
-						variableName_table_data();
-						number = true;
-					} else {
-						number = false;
-						JOptionPane.showMessageDialog(null, "It's not a number!");
-					}
-				}
+				//				boolean number = false;
+				//				while(number == false) {
+				//					String n_variables_String = JOptionPane.showInputDialog("How many quality criteria?");
+				//					if (n_variables_String.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
+				//						int n_variables = Integer.parseInt(n_variables_String);
+				//						table_rows = n_variables;
+				////						variable_table_data();
+				////						variableName_table_data();
+				//						number = true;
+				//					} else {
+				//						number = false;
+				//						JOptionPane.showMessageDialog(null, "It's not a number!");
+				//					}
+				//				}
 				windowAlgoritm.setVisible(true);
 			}
 		});
@@ -274,8 +278,6 @@ public class GUI {
 		windowHelp = new JFrame("Help");
 		windowHelp.setSize(600, 350);
 		windowHelp.setLocationRelativeTo(null);
-		//windowHelp.setVisible(true);
-		//		windowHelp.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		//1. Help panel - Tab's
 		JTabbedPane help_tp =new JTabbedPane();
@@ -361,7 +363,6 @@ public class GUI {
 		windowAlgoritm = new JFrame("Algoritm");
 		windowAlgoritm.setSize(350, 350);
 		windowAlgoritm.setLocationRelativeTo(null);
-		//windowHelp.setVisible(true);
 		windowAlgoritm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		//Algoritm panel
@@ -419,36 +420,28 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {				
 				boolean number = false;
-//				String n_variables_String = nVariable_tf.getText();
 				while(number == false) {
 					String n_variables_String = nVariable_tf.getText();
-					int n_variables = Integer.parseInt(n_variables_String);
 					if (n_variables_String.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
-//						int n_variables = Integer.parseInt(n_variables_String);
+						int n_variables = Integer.parseInt(n_variables_String);
 						table_rows = n_variables;
-						variable_table_data();
-						variableName_table_data();
+						//						variable_table_data();
+						//						variableName_table_data();
 						number = true;
-						System.out.println("asd");
 					} else {
-						number = false;
+						number = true;
 						JOptionPane.showMessageDialog(null, "It's not a number!");
-						System.out.println("qweasd");
 					}
-//					number = true;
-//					System.out.println("iuoo");
 				}	
-//				number = true;
-//				System.out.println("iuoo");
-				//				JOptionPane.showMessageDialog(null, "OK!");
-				//				windowAlgoritm.setVisible(true);
 			}
 		});
 
-		//Tables panel
-		tables_panel = new JPanel();
-		tables_panel.setLayout(new BorderLayout());
-		algoritm_panel.add(tables_panel, BorderLayout.CENTER);
+		//Problem type and algoritm panel
+		problemType_and_Algoritms_panel = new JPanel();
+		problemType_and_Algoritms_panel.setLayout(new BorderLayout());
+		algoritm_panel.add(problemType_and_Algoritms_panel, BorderLayout.CENTER);
+
+		problemType_and_Algoritms();
 
 		//Read and save, Help and execute file panel
 		JPanel bottom_panel = new JPanel();
@@ -505,63 +498,142 @@ public class GUI {
 		help_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//				JOptionPane.showMessageDialog(null, "Help!");
 				windowHelp.setVisible(true);
 			}
 		});
 	}
 
-	private void variable_table_data () {
-		JPanel variable_table_panel = new JPanel();
-		variable_table_panel.setLayout(new GridLayout(1, 1));
-		tables_panel.add(variable_table_panel, BorderLayout.WEST);
+	private void problemType_and_Algoritms () {
+		//Problem Type
+		JPanel problemType_panel = new JPanel();
+		problemType_panel.setLayout(new GridLayout(0, 1));
+		problemType_and_Algoritms_panel.add(problemType_panel, BorderLayout.CENTER);
 
-		//ADD SCROLLPANE
-		JScrollPane scrollPane = new JScrollPane();
-		variable_table_panel.add(scrollPane);
+		ButtonGroup group = new ButtonGroup();
 
-		//THE TABLE
-		JTable variable_table = new JTable();
-		scrollPane.setViewportView(variable_table);
-
-		//THE MODEL OF OUR TABLE
-		@SuppressWarnings("serial")
-		DefaultTableModel model = new DefaultTableModel(){
-			public Class<?> getColumnClass(int column){
-				switch(column){
-				case 0:
-					return String.class;
-				case 1:
-					return Boolean.class;
-				default:
-					return String.class;
-				}
-			}
-		};
-
-		//ASSIGN THE MODEL TO TABLE
-		variable_table.setModel(model);
-
-		model.addColumn("Algoritm");
-		model.addColumn("Select");
-
-		//THE ROW
-		for(int i=0;i<table_rows;i++) {
-			model.addRow(new Object[0]);
-			model.setValueAt((i+1), i, 0);
-			model.setValueAt(false,i,1);
+		for (String type : ProblemType) {
+			JRadioButton problem_type = new JRadioButton(type);
+			problem_type.setActionCommand(type);
+			group.add(problem_type);
+			problemType_panel.add(problem_type);
+			//Register a listener for the radio buttons
+			problem_type.addActionListener(this);
 		}
 
-		variable_table.setPreferredScrollableViewportSize(variable_table.getPreferredSize());
-		variable_table.setFillsViewportHeight(true);
+	}
 
-		windowAlgoritm.setVisible(true);
-	}	
+	//Listens to the radio buttons
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String type_name = e.getActionCommand();
+		
+		JPanel oldProblemAlgoritms_panel = ProblemAlgoritms_panel;
+		
+		switch (type_name) {
+		case "Binary":
+			ProblemAlgoritms_panel = show_algoritms(jMetal.OptimizationProcess.getAlgorithsForBinaryProblemType());
+			break;
+		case "Double":
+			ProblemAlgoritms_panel = show_algoritms(jMetal.OptimizationProcess.getAlgorithsForDoubleProblemType());
+			break;
+		case "Integer":
+			ProblemAlgoritms_panel = show_algoritms(jMetal.OptimizationProcess.getAlgorithsForIntegerProblemType());
+			break;
+		default:
+			break;
+		}
+		
+		if (oldProblemAlgoritms_panel != null) {
+			problemType_and_Algoritms_panel.remove(oldProblemAlgoritms_panel);
+		}
+
+		problemType_and_Algoritms_panel.add(ProblemAlgoritms_panel, BorderLayout.EAST);
+		problemType_and_Algoritms_panel.revalidate();
+		problemType_and_Algoritms_panel.repaint();
+	}
+
+	public JPanel show_algoritms (String [] algoritms_list) {
+		//Algoritms of an especific problem type
+		ProblemAlgoritms_panel = new JPanel();
+		ProblemAlgoritms_panel.setLayout(new GridLayout(0, 1));
+		problemType_and_Algoritms_panel.add(ProblemAlgoritms_panel, BorderLayout.EAST);
+
+		for (String algoritm : algoritms_list) {
+			Checkbox cb_algoritm = new Checkbox(algoritm);
+			ProblemAlgoritms_panel.add(cb_algoritm);
+		}
+		
+		return ProblemAlgoritms_panel;
+	}
+
+	private void decisionVariable_window () {
+		windowDecisionVariable = new JFrame("Decision Variable");
+		windowDecisionVariable.setSize(350, 350);
+		windowDecisionVariable.setLocationRelativeTo(null);
+		windowDecisionVariable.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
+		decisionVariable_panel = new JPanel();
+		decisionVariable_panel.setLayout(new BorderLayout());
+		windowDecisionVariable.add(decisionVariable_panel);
+		
+		JTextField tf_variablegroupName = new JTextField("Name of decision variables (group)");
+		decisionVariable_panel.add(tf_variablegroupName, BorderLayout.NORTH);
+		
+		
+	}
+	
+
+//		private void variable_table_data () {
+//		JPanel variable_table_panel = new JPanel();
+//		variable_table_panel.setLayout(new GridLayout(1, 1));
+//		decisionVariable_panel.add(variable_table_panel, BorderLayout.WEST);
+//
+//		//ADD SCROLLPANE
+//		JScrollPane scrollPane = new JScrollPane();
+//		variable_table_panel.add(scrollPane);
+//
+//		//THE TABLE
+//		JTable variable_table = new JTable();
+//		scrollPane.setViewportView(variable_table);
+//
+//		//THE MODEL OF OUR TABLE
+//		@SuppressWarnings("serial")
+//		DefaultTableModel model = new DefaultTableModel(){
+//			public Class<?> getColumnClass(int column){
+//				switch(column){
+//				case 0:
+//					return String.class;
+//				case 1:
+//					return Boolean.class;
+//				default:
+//					return String.class;
+//				}
+//			}
+//		};
+//
+//		//ASSIGN THE MODEL TO TABLE
+//		variable_table.setModel(model);
+//
+//		model.addColumn("Algoritm");
+//		model.addColumn("Select");
+//
+//		//THE ROW
+//		for(int i=0;i<table_rows;i++) {
+//			model.addRow(new Object[0]);
+//			model.setValueAt((i+1), i, 0);
+//			model.setValueAt(false,i,1);
+//		}
+//
+//		variable_table.setPreferredScrollableViewportSize(variable_table.getPreferredSize());
+//		variable_table.setFillsViewportHeight(true);
+//
+//		windowAlgoritm.setVisible(true);
+//	}	
 
 	private void variableName_table_data () {
 		JPanel variableName_table_panel = new JPanel();
 		variableName_table_panel.setLayout(new GridLayout(1, 1));
-		tables_panel.add(variableName_table_panel, BorderLayout.EAST);
+		decisionVariable_panel.add(variableName_table_panel, BorderLayout.EAST);
 
 		//ADD SCROLLPANE
 		JScrollPane scrollPane = new JScrollPane();
@@ -580,6 +652,8 @@ public class GUI {
 					return String.class;
 				case 1:
 					return String.class;
+				case 2:
+					return String.class;
 				default:
 					return String.class;
 				}
@@ -589,8 +663,9 @@ public class GUI {
 		//ASSIGN THE MODEL TO TABLE
 		variableName_table.setModel(model);
 
-		model.addColumn("Rule");
-		model.addColumn("Name");
+		model.addColumn("Decision Variable");
+		model.addColumn("Decision Variable Name");
+		model.addColumn("Value");
 
 		//THE ROW
 		for(int i=0;i<table_rows;i++) {
@@ -604,5 +679,6 @@ public class GUI {
 
 		windowAlgoritm.setVisible(true);
 	}	
+	 
 
 }
