@@ -1,5 +1,4 @@
-1./O que escrever no problema? /Nesse campo terá que indicar o nome do problema que pretende optimizar.
-2./Qual o formato aceitável para escrever o nome do problema? /O formato aceitável para o nome do problema é o seguido pelas conveções ou restições usadas para o nome de classes em java.
-3./O que é a descrição? /É uma descrição textual em, lingua natural, sobre o problema de optimização que pretende resolver.
-4./Separador "Question by E-mail". /O utilizador deverá o indicar os eu endereço de email, para que lhe sejam enviadas menssagens com informções de ajuda ou receber indicações sobre o progresso do processo da optimização que solicitou através da plataforma.
-5./P/R
+1./O que escrever no problema? /Nesse campo tera que indicar o nome do problema que pretende optimizar.
+2./Qual o formato aceitavel para escrever o nome do problema? /O formato aceitavel para o nome do problema e o seguido pelas convecoes ou resticoes usadas para o nome de classes em java.
+3./O que e a descricao? /E uma descricao textual em, lingua natural, sobre o problema de optimizacao que pretende resolver.
+4./Separador "Question by E-mail". /O utilizador devera o indicar os eu endereco de email, para que lhe sejam enviadas menssagens com informcoes de ajuda ou receber indicacoes sobre o progresso do processo da optimizacao que solicitou atraves da plataforma.
