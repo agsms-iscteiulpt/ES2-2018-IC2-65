@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -37,6 +38,7 @@ import FrequentQuestions.Read_FrequentQuestions;
 import Users.Database;
 import Users.General_user;
 import jMetal.OptimizationProcess;
+import XML.*;
 
 public class GUI implements ActionListener {
 
@@ -55,9 +57,15 @@ public class GUI implements ActionListener {
 	private JCheckBox user_cb;
 
 	private static String problem_type_selected;
-	private static Checkbox cb_algoritm;
+//	private JRadioButton problem_type;
+	private JRadioButton problem_type_binary;
+	private JRadioButton problem_type_integer;
+	private JRadioButton problem_type_double;
+	private ButtonGroup groupProblems;
+	private static JCheckBox cb_algoritm;
 	private static ArrayList<String> algoritmsChecked = new ArrayList<>();
-	private ArrayList<Checkbox> algoritms_list = new ArrayList<>();
+	private ArrayList<JCheckBox> cb_algoritmsChecked = new ArrayList<>();
+	private ArrayList<JCheckBox> algoritms_list = new ArrayList<>();
 
 	private JTextField username_tf;
 	private JPasswordField password_pf;
@@ -65,6 +73,7 @@ public class GUI implements ActionListener {
 	private static String criteria1_name;
 	private static String criteria2_name;
 	private static int n_variables;
+	private JTextField nVariable_tf;
 	private boolean correctFile;
 	private boolean correctNumber;
 
@@ -417,31 +426,59 @@ public class GUI implements ActionListener {
 		time_variable_panel.add(nVariable_panel, BorderLayout.SOUTH);
 
 		JLabel nVariable_lb = new JLabel("Number of Variables: ");
-		JTextField nVariable_tf = new JTextField(2);
-		//		JButton OK_button = new JButton("OK");
+		nVariable_tf = new JTextField(2);
+		JButton readXML_button = new JButton("Upload XML file");
 		nVariable_panel.add(nVariable_lb);
 		nVariable_panel.add(nVariable_tf);
-		//		nVariable_panel.add(OK_button);
+		nVariable_panel.add(readXML_button);
 
-		//		OK_button.addActionListener(new ActionListener() {
-		//			@Override
-		//			public void actionPerformed(ActionEvent e) {				
-		//				boolean number = false;
-		//				while(number == false) {
-		//					String n_variables_String = nVariable_tf.getText();
-		//					if (n_variables_String.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
-		//						int n_variables = Integer.parseInt(n_variables_String);
-		//						table_rows = n_variables;
-		//						//						variable_table_data();
-		//						//						variableName_table_data();
-		//						number = true;
-		//					} else {
-		//						number = true;
-		//						JOptionPane.showMessageDialog(null, "It's not a number!");
-		//					}
-		//				}	
-		//			}
-		//		});
+		readXML_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.showOpenDialog(null);
+				//selecionar somente ficheiros
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				file = fileChooser.getSelectedFile();
+				
+				XMLReader xml = new XMLReader(file);
+				
+				String problemType = xml.getProblemType();
+				ArrayList<String> algoritms = xml.getAlgoritms();
+				String n_variable = xml.getN_variables();
+				String jarPath = xml.getJar_path();
+				
+				if (problemType.equals("Binary")) {
+					problem_type_binary.setSelected(true);
+					problem_type_binary.doClick();
+				} else if (problemType.equals("Integer")) {
+					problem_type_integer.setSelected(true);
+					problem_type_integer.doClick();
+				} else if (problemType.equals("Double")) {
+					problem_type_double.setSelected(true);
+					problem_type_double.doClick();
+				}
+				
+				for (JCheckBox cb_algoritm : algoritms_list) {
+					for (String algoritm_string : algoritms) {
+						if(cb_algoritm.getLabel().equals(algoritm_string)) {
+//							cb_algoritm.setCheckboxGroup(null);
+							algoritmsChecked.add(algoritm_string);
+							cb_algoritmsChecked.add(cb_algoritm);
+						}
+					}
+				}
+				
+				for (JCheckBox cb_algoritmChecked : cb_algoritmsChecked) {
+					JCheckBox checkBox = cb_algoritmChecked;
+					checkBox.doClick();
+//					fireContentsChanged(this, index, index);
+				}
+				nVariable_tf.setText(n_variable);
+				
+				textFieldFile.setText(jarPath);
+			}
+		});
 
 		//Problem type and algoritm panel
 		problemType_and_Algoritms_panel = new JPanel();
@@ -459,7 +496,7 @@ public class GUI implements ActionListener {
 		read_save_panel.setLayout(new BorderLayout());
 		bottom_panel.add(read_save_panel, BorderLayout.NORTH);
 
-		JButton readFile_button = new JButton("Read File");
+		JButton readFile_button = new JButton("Read .JAR File");
 		read_save_panel.add(readFile_button, BorderLayout.WEST);
 
 		readFile_button.addActionListener(new ActionListener() {
@@ -489,8 +526,18 @@ public class GUI implements ActionListener {
 
 		read_save_panel.add(filePath_panel, BorderLayout.SOUTH);
 
-		//		JButton saveFile_button = new JButton("Save");
-		//		read_save_panel.add(saveFile_button, BorderLayout.EAST);
+		JButton saveFile_button = new JButton("Save XML File");
+		read_save_panel.add(saveFile_button, BorderLayout.EAST);
+		saveFile_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkIfAllRight();
+				algoritmsChecked();
+				String n_variables_String = nVariable_tf.getText();
+				new XMLWriter(problem_type_selected, algoritmsChecked, n_variables_String, getFilePath());
+			}
+		});
+
 
 		JPanel help_execute_panel = new JPanel();
 		help_execute_panel.setLayout(new BorderLayout());
@@ -504,44 +551,8 @@ public class GUI implements ActionListener {
 		execute_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				checkIfAllRight();
 				algoritmsChecked();
-				String n_variables_String = nVariable_tf.getText();
-				String file_Name = textFieldFile.getText();
-				correctFile = false;
-				correctNumber = false;
-				if (correctFile == false || correctNumber == false) {
-					while (correctFile == false) {
-						if(file_Name.equals("") && correctFile == false) {
-							JOptionPane.showMessageDialog(null, "You need to insert a file!");
-							correctFile = true;
-						} 
-						correctFile = true;
-					}
-
-					while (correctNumber == false) {	
-						if(n_variables_String.equals("") && correctNumber == false) {
-							JOptionPane.showMessageDialog(null, "Number of variables missing!");
-							correctNumber = true;
-						}
-						correctNumber = true;	
-					}
-				}
-
-				if (problemWasChosen() == false) {
-					JOptionPane.showMessageDialog(null, "Need to choose type of problem!");
-				}
-
-				if (algoritmWasChosen() == false) {
-					JOptionPane.showMessageDialog(null, "Need to choose algoritms!");
-				}
-
-				if (!file_Name.equals("") && isNumber(n_variables_String) == true && problemWasChosen() == true && algoritmWasChosen() == true) {
-					correctFile = true;
-					correctNumber = true;
-					n_variables = Integer.parseInt(n_variables_String);
-					decisionVariable_window();
-					windowDecisionVariable.setVisible(true);
-				}
 			}
 		});
 
@@ -551,6 +562,46 @@ public class GUI implements ActionListener {
 				windowHelp.setVisible(true);
 			}
 		});
+	}
+
+	private void checkIfAllRight () {
+		String n_variables_String = nVariable_tf.getText();
+		String file_Name = textFieldFile.getText();
+		correctFile = false;
+		correctNumber = false;
+		if (correctFile == false || correctNumber == false) {
+			while (correctFile == false) {
+				if(file_Name.equals("") && correctFile == false) {
+					JOptionPane.showMessageDialog(null, "You need to insert a file!");
+					correctFile = true;
+				} 
+				correctFile = true;
+			}
+
+			while (correctNumber == false) {	
+				if(n_variables_String.equals("") && correctNumber == false) {
+					JOptionPane.showMessageDialog(null, "Number of variables missing!");
+					correctNumber = true;
+				}
+				correctNumber = true;	
+			}
+		}
+
+		if (problemWasChosen() == false) {
+			JOptionPane.showMessageDialog(null, "Need to choose type of problem!");
+		}
+
+		if (algoritmWasChosen() == false) {
+			JOptionPane.showMessageDialog(null, "Need to choose algoritms!");
+		}
+
+		if (!file_Name.equals("") && isNumber(n_variables_String) == true && problemWasChosen() == true && algoritmWasChosen() == true) {
+			correctFile = true;
+			correctNumber = true;
+			n_variables = Integer.parseInt(n_variables_String);
+			decisionVariable_window();
+			windowDecisionVariable.setVisible(true);
+		}
 	}
 
 	private boolean isNumber (String n_variables_String) {
@@ -591,17 +642,33 @@ public class GUI implements ActionListener {
 		problemType_panel.setLayout(new GridLayout(0, 1));
 		problemType_and_Algoritms_panel.add(problemType_panel, BorderLayout.CENTER);
 
-		ButtonGroup group = new ButtonGroup();
+		groupProblems = new ButtonGroup();
 
-		for (String type : ProblemType) {
-			JRadioButton problem_type = new JRadioButton(type);
-			problem_type.setActionCommand(type);
-			group.add(problem_type);
-			problemType_panel.add(problem_type);
+//		for (String type : ProblemType) {
+//			problem_type = new JRadioButton(type);
+//			problem_type.setActionCommand(type);
+//			groupProblems.add(problem_type);
+//			problemType_panel.add(problem_type);
+//			//Register a listener for the radio buttons
+//			problem_type.addActionListener(this);
+//		}
+		
+			problem_type_binary = new JRadioButton("Binary");
+			problem_type_integer = new JRadioButton("Integer");
+			problem_type_double = new JRadioButton("Double");
+			problem_type_binary.setActionCommand("Binary");
+			problem_type_integer.setActionCommand("Integer");
+			problem_type_double.setActionCommand("Double");
+			groupProblems.add(problem_type_binary);
+			groupProblems.add(problem_type_integer);
+			groupProblems.add(problem_type_double);
+			problemType_panel.add(problem_type_binary);
+			problemType_panel.add(problem_type_integer);
+			problemType_panel.add(problem_type_double);
 			//Register a listener for the radio buttons
-			problem_type.addActionListener(this);
-		}
-
+			problem_type_binary.addActionListener(this);
+			problem_type_integer.addActionListener(this);
+			problem_type_double.addActionListener(this);
 	}
 
 	//Listens to the radio buttons
@@ -644,7 +711,7 @@ public class GUI implements ActionListener {
 		problemType_and_Algoritms_panel.add(ProblemAlgoritms_panel, BorderLayout.EAST);
 
 		for (String algoritm : algoritmsList) {
-			cb_algoritm = new Checkbox(algoritm);
+			cb_algoritm = new JCheckBox(algoritm);
 			ProblemAlgoritms_panel.add(cb_algoritm);
 			algoritms_list.add(cb_algoritm);
 		}
@@ -666,16 +733,27 @@ public class GUI implements ActionListener {
 		decisionVariable_panel.add(tf_variablegroupName, BorderLayout.NORTH);
 
 		JButton ok_button = new JButton("OK");
-		decisionVariable_panel.add(ok_button, BorderLayout.SOUTH);
+		decisionVariable_panel.add(ok_button, BorderLayout.EAST);
+
+		JProgressBar pb = new JProgressBar();
+		pb.setMinimum(0);
+		pb.setMaximum(100);
+		pb.setStringPainted(true);
+		decisionVariable_panel.add(pb, BorderLayout.SOUTH);
 
 		variableName_table_data ();
 
 		ok_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				ProgressBar pb = new ProgressBar();
-//				pb.show();
-//				pb.start();
+				int pb_value = pb.getValue();
+				pb.setValue(pb_value + 1);
+				pb.setStringPainted(true);
+
+
+				//				ProgressBar pb = new ProgressBar();
+				//				pb.show();
+				//				pb.start();
 				new OptimizationProcess(problem_type_selected);
 			}
 		});
@@ -743,8 +821,8 @@ public class GUI implements ActionListener {
 	}
 
 	private void algoritmsChecked () {
-		for (Checkbox algoritm : algoritms_list) {
-			if(algoritm.getState()==true) {
+		for (JCheckBox algoritm : algoritms_list) {
+			if(algoritm.isSelected()==true) {
 				algoritmsChecked.add(algoritm.getLabel());
 			}
 		}
@@ -765,15 +843,15 @@ public class GUI implements ActionListener {
 	public static JTable getVariableName_table() {
 		return variableName_table;
 	}
-	
+
 	public static String getProblem_type_selected() {
 		return problem_type_selected;
 	}
-	
+
 	public static String getCriteria1_name() {
 		return criteria1_name;
 	}
-	
+
 	public static String getCriteria2_name() {
 		return criteria2_name;
 	}
