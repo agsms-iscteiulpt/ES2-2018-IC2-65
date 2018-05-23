@@ -14,7 +14,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,13 +29,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
 import javax.swing.table.DefaultTableModel;
 
-import Email.*;
-import FrequentQuestions.*;
-import Users.*;
-import jMetal.*;
+import Email.Send_Email;
+import FrequentQuestions.FrequentQuestions;
+import FrequentQuestions.Read_FrequentQuestions;
+import Users.Database;
+import Users.General_user;
+import jMetal.OptimizationProcess;
 
 public class GUI implements ActionListener {
 
@@ -54,13 +54,23 @@ public class GUI implements ActionListener {
 	private JCheckBox admin_cb;
 	private JCheckBox user_cb;
 
-	private int table_rows;
+	private static String problem_type_selected;
+	private static Checkbox cb_algoritm;
+	private static ArrayList<String> algoritmsChecked = new ArrayList<>();
+	private ArrayList<Checkbox> algoritms_list = new ArrayList<>();
 
 	private JTextField username_tf;
 	private JPasswordField password_pf;
 
+	private static String criteria1_name;
+	private static String criteria2_name;
+	private static int n_variables;
+	private boolean correctFile;
+	private boolean correctNumber;
+
 	private static File file;
 	private static JTextField textFieldFile;
+	private static JTable variableName_table;
 
 	@SuppressWarnings("unused")
 	private Database database;
@@ -254,21 +264,18 @@ public class GUI implements ActionListener {
 		confirm_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//				boolean number = false;
-				//				while(number == false) {
-				//					String n_variables_String = JOptionPane.showInputDialog("How many quality criteria?");
-				//					if (n_variables_String.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
-				//						int n_variables = Integer.parseInt(n_variables_String);
-				//						table_rows = n_variables;
-				////						variable_table_data();
-				////						variableName_table_data();
-				//						number = true;
-				//					} else {
-				//						number = false;
-				//						JOptionPane.showMessageDialog(null, "It's not a number!");
-				//					}
-				//				}
-				windowAlgoritm.setVisible(true);
+				JTextField criteria1 = new JTextField("Criteria1");
+				JTextField criteria2 = new JTextField("Criteria2");
+				Object[] message = {
+						"Quality criteria 1:", criteria1,
+						"Quality criteria 2:", criteria2,
+				};
+				int option = JOptionPane.showConfirmDialog(null, message, "Name quality criteria", JOptionPane.OK_CANCEL_OPTION);
+				if (option == JOptionPane.OK_OPTION) {
+					windowAlgoritm.setVisible(true);
+					criteria1_name = criteria1.getText();
+					criteria2_name = criteria2.getText();
+				}
 			}
 		});
 	}
@@ -411,30 +418,30 @@ public class GUI implements ActionListener {
 
 		JLabel nVariable_lb = new JLabel("Number of Variables: ");
 		JTextField nVariable_tf = new JTextField(2);
-		JButton OK_button = new JButton("OK");
+		//		JButton OK_button = new JButton("OK");
 		nVariable_panel.add(nVariable_lb);
 		nVariable_panel.add(nVariable_tf);
-		nVariable_panel.add(OK_button);
+		//		nVariable_panel.add(OK_button);
 
-		OK_button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {				
-				boolean number = false;
-				while(number == false) {
-					String n_variables_String = nVariable_tf.getText();
-					if (n_variables_String.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
-						int n_variables = Integer.parseInt(n_variables_String);
-						table_rows = n_variables;
-						//						variable_table_data();
-						//						variableName_table_data();
-						number = true;
-					} else {
-						number = true;
-						JOptionPane.showMessageDialog(null, "It's not a number!");
-					}
-				}	
-			}
-		});
+		//		OK_button.addActionListener(new ActionListener() {
+		//			@Override
+		//			public void actionPerformed(ActionEvent e) {				
+		//				boolean number = false;
+		//				while(number == false) {
+		//					String n_variables_String = nVariable_tf.getText();
+		//					if (n_variables_String.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
+		//						int n_variables = Integer.parseInt(n_variables_String);
+		//						table_rows = n_variables;
+		//						//						variable_table_data();
+		//						//						variableName_table_data();
+		//						number = true;
+		//					} else {
+		//						number = true;
+		//						JOptionPane.showMessageDialog(null, "It's not a number!");
+		//					}
+		//				}	
+		//			}
+		//		});
 
 		//Problem type and algoritm panel
 		problemType_and_Algoritms_panel = new JPanel();
@@ -482,8 +489,8 @@ public class GUI implements ActionListener {
 
 		read_save_panel.add(filePath_panel, BorderLayout.SOUTH);
 
-		JButton saveFile_button = new JButton("Save");
-		read_save_panel.add(saveFile_button, BorderLayout.EAST);
+		//		JButton saveFile_button = new JButton("Save");
+		//		read_save_panel.add(saveFile_button, BorderLayout.EAST);
 
 		JPanel help_execute_panel = new JPanel();
 		help_execute_panel.setLayout(new BorderLayout());
@@ -494,6 +501,49 @@ public class GUI implements ActionListener {
 		help_execute_panel.add(help_button, BorderLayout.WEST);
 		JButton execute_button = new JButton("EXECUTE");
 		help_execute_panel.add(execute_button, BorderLayout.EAST);
+		execute_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				algoritmsChecked();
+				String n_variables_String = nVariable_tf.getText();
+				String file_Name = textFieldFile.getText();
+				correctFile = false;
+				correctNumber = false;
+				if (correctFile == false || correctNumber == false) {
+					while (correctFile == false) {
+						if(file_Name.equals("") && correctFile == false) {
+							JOptionPane.showMessageDialog(null, "You need to insert a file!");
+							correctFile = true;
+						} 
+						correctFile = true;
+					}
+
+					while (correctNumber == false) {	
+						if(n_variables_String.equals("") && correctNumber == false) {
+							JOptionPane.showMessageDialog(null, "Number of variables missing!");
+							correctNumber = true;
+						}
+						correctNumber = true;	
+					}
+				}
+
+				if (problemWasChosen() == false) {
+					JOptionPane.showMessageDialog(null, "Need to choose type of problem!");
+				}
+
+				if (algoritmWasChosen() == false) {
+					JOptionPane.showMessageDialog(null, "Need to choose algoritms!");
+				}
+
+				if (!file_Name.equals("") && isNumber(n_variables_String) == true && problemWasChosen() == true && algoritmWasChosen() == true) {
+					correctFile = true;
+					correctNumber = true;
+					n_variables = Integer.parseInt(n_variables_String);
+					decisionVariable_window();
+					windowDecisionVariable.setVisible(true);
+				}
+			}
+		});
 
 		help_button.addActionListener(new ActionListener() {
 			@Override
@@ -501,6 +551,38 @@ public class GUI implements ActionListener {
 				windowHelp.setVisible(true);
 			}
 		});
+	}
+
+	private boolean isNumber (String n_variables_String) {
+		boolean number = false;
+		if(!n_variables_String.equals("")) {
+			while (number == false) {
+				if (n_variables_String.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
+					n_variables = Integer.parseInt(n_variables_String);
+					number = true;
+					return true;
+				} else {
+					JOptionPane.showMessageDialog(null, "It's not a number!");
+					number = true;
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean problemWasChosen () {
+		if (problem_type_selected != null) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean algoritmWasChosen () {
+		if (!algoritmsChecked.isEmpty()) {
+			return true;
+		}
+		return false;
 	}
 
 	private void problemType_and_Algoritms () {
@@ -526,23 +608,26 @@ public class GUI implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String type_name = e.getActionCommand();
-		
+
 		JPanel oldProblemAlgoritms_panel = ProblemAlgoritms_panel;
-		
+
 		switch (type_name) {
 		case "Binary":
 			ProblemAlgoritms_panel = show_algoritms(jMetal.OptimizationProcess.getAlgorithsForBinaryProblemType());
+			problem_type_selected = "Binary";
 			break;
 		case "Double":
 			ProblemAlgoritms_panel = show_algoritms(jMetal.OptimizationProcess.getAlgorithsForDoubleProblemType());
+			problem_type_selected = "Double";
 			break;
 		case "Integer":
 			ProblemAlgoritms_panel = show_algoritms(jMetal.OptimizationProcess.getAlgorithsForIntegerProblemType());
+			problem_type_selected = "Integer";
 			break;
 		default:
 			break;
 		}
-		
+
 		if (oldProblemAlgoritms_panel != null) {
 			problemType_and_Algoritms_panel.remove(oldProblemAlgoritms_panel);
 		}
@@ -552,95 +637,62 @@ public class GUI implements ActionListener {
 		problemType_and_Algoritms_panel.repaint();
 	}
 
-	public JPanel show_algoritms (String [] algoritms_list) {
+	public JPanel show_algoritms (String [] algoritmsList) {
 		//Algoritms of an especific problem type
 		ProblemAlgoritms_panel = new JPanel();
 		ProblemAlgoritms_panel.setLayout(new GridLayout(0, 1));
 		problemType_and_Algoritms_panel.add(ProblemAlgoritms_panel, BorderLayout.EAST);
 
-		for (String algoritm : algoritms_list) {
-			Checkbox cb_algoritm = new Checkbox(algoritm);
+		for (String algoritm : algoritmsList) {
+			cb_algoritm = new Checkbox(algoritm);
 			ProblemAlgoritms_panel.add(cb_algoritm);
+			algoritms_list.add(cb_algoritm);
 		}
-		
+
 		return ProblemAlgoritms_panel;
 	}
 
 	private void decisionVariable_window () {
 		windowDecisionVariable = new JFrame("Decision Variable");
-		windowDecisionVariable.setSize(350, 350);
+		windowDecisionVariable.setSize(600, 350);
 		windowDecisionVariable.setLocationRelativeTo(null);
 		windowDecisionVariable.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		
+
 		decisionVariable_panel = new JPanel();
 		decisionVariable_panel.setLayout(new BorderLayout());
 		windowDecisionVariable.add(decisionVariable_panel);
-		
+
 		JTextField tf_variablegroupName = new JTextField("Name of decision variables (group)");
 		decisionVariable_panel.add(tf_variablegroupName, BorderLayout.NORTH);
-		
-		
-	}
-	
 
-//		private void variable_table_data () {
-//		JPanel variable_table_panel = new JPanel();
-//		variable_table_panel.setLayout(new GridLayout(1, 1));
-//		decisionVariable_panel.add(variable_table_panel, BorderLayout.WEST);
-//
-//		//ADD SCROLLPANE
-//		JScrollPane scrollPane = new JScrollPane();
-//		variable_table_panel.add(scrollPane);
-//
-//		//THE TABLE
-//		JTable variable_table = new JTable();
-//		scrollPane.setViewportView(variable_table);
-//
-//		//THE MODEL OF OUR TABLE
-//		@SuppressWarnings("serial")
-//		DefaultTableModel model = new DefaultTableModel(){
-//			public Class<?> getColumnClass(int column){
-//				switch(column){
-//				case 0:
-//					return String.class;
-//				case 1:
-//					return Boolean.class;
-//				default:
-//					return String.class;
-//				}
-//			}
-//		};
-//
-//		//ASSIGN THE MODEL TO TABLE
-//		variable_table.setModel(model);
-//
-//		model.addColumn("Algoritm");
-//		model.addColumn("Select");
-//
-//		//THE ROW
-//		for(int i=0;i<table_rows;i++) {
-//			model.addRow(new Object[0]);
-//			model.setValueAt((i+1), i, 0);
-//			model.setValueAt(false,i,1);
-//		}
-//
-//		variable_table.setPreferredScrollableViewportSize(variable_table.getPreferredSize());
-//		variable_table.setFillsViewportHeight(true);
-//
-//		windowAlgoritm.setVisible(true);
-//	}	
+		JButton ok_button = new JButton("OK");
+		decisionVariable_panel.add(ok_button, BorderLayout.SOUTH);
+
+		variableName_table_data ();
+
+		ok_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+//				ProgressBar pb = new ProgressBar();
+//				pb.show();
+//				pb.start();
+				new OptimizationProcess(problem_type_selected);
+			}
+		});
+
+	}
 
 	private void variableName_table_data () {
 		JPanel variableName_table_panel = new JPanel();
 		variableName_table_panel.setLayout(new GridLayout(1, 1));
-		decisionVariable_panel.add(variableName_table_panel, BorderLayout.EAST);
+		decisionVariable_panel.add(variableName_table_panel, BorderLayout.CENTER);
 
 		//ADD SCROLLPANE
 		JScrollPane scrollPane = new JScrollPane();
 		variableName_table_panel.add(scrollPane);
 
 		//THE TABLE
-		JTable variableName_table = new JTable();
+		variableName_table = new JTable();
 		scrollPane.setViewportView(variableName_table);
 
 		//THE MODEL OF OUR TABLE
@@ -651,9 +703,9 @@ public class GUI implements ActionListener {
 				case 0:
 					return String.class;
 				case 1:
-					return String.class;
+					return Double.class;
 				case 2:
-					return String.class;
+					return Double.class;
 				default:
 					return String.class;
 				}
@@ -664,21 +716,65 @@ public class GUI implements ActionListener {
 		variableName_table.setModel(model);
 
 		model.addColumn("Decision Variable");
-		model.addColumn("Decision Variable Name");
-		model.addColumn("Value");
+		model.addColumn("Min");
+		model.addColumn("Max");
 
 		//THE ROW
-		for(int i=0;i<table_rows;i++) {
+		for(int i=0;i<n_variables;i++) {
 			model.addRow(new Object[0]);
-			model.setValueAt((i+1), i, 0);
-			model.setValueAt("Rule" + (i+1),i,1);
+			model.setValueAt("Variable " + (i+1),i,0);
+			if (problem_type_selected.equals("Double")) {
+				model.setValueAt(-5.0,i,1);
+				model.setValueAt(+5.0,i,2);
+			} else if (problem_type_selected.equals("Integer")) {
+				model.setValueAt(-1000,i,1);
+				model.setValueAt(+1000,i,2);
+			} else if (problem_type_selected.equals("Binary")) {
+				model.setValueAt(0,i,1);
+				model.setValueAt(1,i,2);
+			}
 		}
 
 		variableName_table.setPreferredScrollableViewportSize(variableName_table.getPreferredSize());
 		variableName_table.setFillsViewportHeight(true);
 
 		windowAlgoritm.setVisible(true);
-	}	
-	 
 
+	}
+
+	private void algoritmsChecked () {
+		for (Checkbox algoritm : algoritms_list) {
+			if(algoritm.getState()==true) {
+				algoritmsChecked.add(algoritm.getLabel());
+			}
+		}
+	}	
+
+	public static ArrayList<String> getAlgoritmsChecked() {
+		return algoritmsChecked;
+	}
+
+	public static String getFilePath() {
+		return file.getAbsolutePath();
+	}
+
+	public static int getN_variables() {
+		return n_variables;
+	}
+
+	public static JTable getVariableName_table() {
+		return variableName_table;
+	}
+	
+	public static String getProblem_type_selected() {
+		return problem_type_selected;
+	}
+	
+	public static String getCriteria1_name() {
+		return criteria1_name;
+	}
+	
+	public static String getCriteria2_name() {
+		return criteria2_name;
+	}
 }

@@ -22,8 +22,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import GUI.*;
 
-
+@SuppressWarnings("serial")
 public class Output extends JFrame {
 
 	Label labelInfo;
@@ -83,8 +84,6 @@ public class Output extends JFrame {
 		getContentPane().add(buttonPrintAll, BorderLayout.PAGE_END);
 	}
 
-	// @SuppressWarnings("serial")
-	@SuppressWarnings("serial")
 	private class MyChart extends JComponent {
 		ArrayList<Integer> chartList;
 
@@ -143,11 +142,17 @@ public class Output extends JFrame {
 	}
 
 	class MyTableModel extends AbstractTableModel {
-		private String[] Algoritms = { "1", "2", "3", "4", "5", "6", "7" };
-		private Object[][] tableData = { { 1, 9, 2, 8, 3, 7, 6 } };
+		private String criteria1 = GUI.getCriteria1_name();
+		private String criteria2 = GUI.getCriteria2_name();
+//		private ArrayList<String> algoritmsChecked = GUI.getAlgoritmsChecked();
+
+		private String[] criteria = { criteria1, criteria2 };
+		private Object[][] tableData = { { 1, 9 } };
+		
+		
 		@Override
 		public int getColumnCount() {
-			return Algoritms.length;
+			return criteria.length;
 		}
 
 		@Override
@@ -157,7 +162,7 @@ public class Output extends JFrame {
 
 		@Override
 		public String getColumnName(int col) {
-			return Algoritms[col];
+			return criteria[col];
 		}
 
 		@Override

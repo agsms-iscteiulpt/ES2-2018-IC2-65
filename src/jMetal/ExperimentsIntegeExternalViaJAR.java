@@ -17,6 +17,8 @@ import org.uma.jmetal.util.experiment.component.*;
 import org.uma.jmetal.util.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.util.experiment.util.ExperimentProblem;
 
+import GUI.GUI;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,69 +26,77 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public class ExperimentsIntegeExternalViaJAR {
-  private static final int INDEPENDENT_RUNS = 2;
-  private static final int maxEvaluations = 250;
-  
-  public static void main(String[] args) throws IOException {
-    String experimentBaseDirectory = "experimentBaseDirectory";
+	private static final int INDEPENDENT_RUNS = 2;
+	private static final int maxEvaluations = 250;
 
-    List<ExperimentProblem<IntegerSolution>> problemList = new ArrayList<>();
-    problemList.add(new ExperimentProblem<>(new MyProblemIntegerExternalViaJAR()));
+	private static ArrayList<String> algoritmsChecked = GUI.getAlgoritmsChecked();
 
-    List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithmList =
-            configureAlgorithmList(problemList);
+	public static void main() throws IOException {
+		String experimentBaseDirectory = "experimentBaseDirectory";
 
-    Experiment<IntegerSolution, List<IntegerSolution>> experiment =
-        new ExperimentBuilder<IntegerSolution, List<IntegerSolution>>("ExperimentsIntegerExternalViaJAR")
-            .setAlgorithmList(algorithmList)
-            .setProblemList(problemList)
-            .setExperimentBaseDirectory(experimentBaseDirectory)
-            .setOutputParetoFrontFileName("FUN")
-            .setOutputParetoSetFileName("VAR")
-            .setReferenceFrontDirectory(experimentBaseDirectory+"/referenceFronts")
-            .setIndicatorList(Arrays.asList(new PISAHypervolume<IntegerSolution>()))
-            .setIndependentRuns(INDEPENDENT_RUNS)
-            .setNumberOfCores(8)
-            .build();
+		List<ExperimentProblem<IntegerSolution>> problemList = new ArrayList<>();
+		problemList.add(new ExperimentProblem<>(new MyProblemIntegerExternalViaJAR()));
 
-    new ExecuteAlgorithms<>(experiment).run();
-    new GenerateReferenceParetoFront(experiment).run();
-    new ComputeQualityIndicators<>(experiment).run() ;
-    new GenerateLatexTablesWithStatistics(experiment).run() ;
-    new GenerateBoxplotsWithR<>(experiment).setRows(1).setColumns(1).run() ;
-  }
+		List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithmList =
+				configureAlgorithmList(problemList);
 
-  static List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> configureAlgorithmList(
-          List<ExperimentProblem<IntegerSolution>> problemList) {
-    List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithms = new ArrayList<>();
+		Experiment<IntegerSolution, List<IntegerSolution>> experiment =
+				new ExperimentBuilder<IntegerSolution, List<IntegerSolution>>("ExperimentsIntegerExternalViaJAR")
+				.setAlgorithmList(algorithmList)
+				.setProblemList(problemList)
+				.setExperimentBaseDirectory(experimentBaseDirectory)
+				.setOutputParetoFrontFileName("FUN")
+				.setOutputParetoSetFileName("VAR")
+				.setReferenceFrontDirectory(experimentBaseDirectory+"/referenceFronts")
+				.setIndicatorList(Arrays.asList(new PISAHypervolume<IntegerSolution>()))
+				.setIndependentRuns(INDEPENDENT_RUNS)
+				.setNumberOfCores(8)
+				.build();
 
-    for (int i = 0; i < problemList.size(); i++) {
-      Algorithm<List<IntegerSolution>> algorithm1 = new NSGAIIBuilder<>(
-              problemList.get(i).getProblem(),
-              new IntegerSBXCrossover(0.9, 20.0),
-              new IntegerPolynomialMutation(1/problemList.get(i).getProblem().getNumberOfVariables(), 20.0))
-              .setMaxEvaluations(maxEvaluations)
-              .setPopulationSize(100)
-              .build();
-      algorithms.add(new ExperimentAlgorithm<>(algorithm1, "NSGAII", problemList.get(i).getTag()));
+		new ExecuteAlgorithms<>(experiment).run();
+		new GenerateReferenceParetoFront(experiment).run();
+		new ComputeQualityIndicators<>(experiment).run() ;
+		new GenerateLatexTablesWithStatistics(experiment).run() ;
+		new GenerateBoxplotsWithR<>(experiment).setRows(1).setColumns(1).run() ;
+	}
 
-      /* As simula��es com ExternalViaJAR no nome tem as fun��es de avalia��o 
-      implementadas em .JAR externos que s�o invocados no m�todo evaluate() 
-      As simula��es que executam .jar externos s�o muito mais demoradas, 
-      maxEvaluations e INDEPENDENT_RUNS tem por isso valores mais baixos */      
-      /* Dever�o ser comentadas ou retiradas de coment�rio as linhas 
-      correspondentes �s simula��es que se pretendem executar */      
-      
-//    Algorithm<List<IntegerSolution>> algorithm2 = new SMSEMOABuilder<>(problemList.get(i).getProblem(), new IntegerSBXCrossover(0.9, 20.0),new IntegerPolynomialMutation(1/problemList.get(i).getProblem().getNumberOfVariables(), 20.0)).setMaxEvaluations(maxEvaluations).build();      
-//    algorithms.add(new ExperimentAlgorithm<>(algorithm2, "SMSEMOA", problemList.get(i).getTag()));
-//	  Algorithm<List<IntegerSolution>> algorithm3 = new MOCellBuilder<>(problemList.get(i).getProblem(),new IntegerSBXCrossover(0.9, 20.0), new IntegerPolynomialMutation(1/problemList.get(i).getProblem().getNumberOfVariables(), 20.0)).setMaxEvaluations(maxEvaluations).build();
-//	  algorithms.add(new ExperimentAlgorithm<>(algorithm3, "MOCell", problemList.get(i).getTag()));    
-//	  Algorithm<List<IntegerSolution>> algorithm4 = new PAESBuilder<>(problemList.get(i).getProblem()).setMaxEvaluations(maxEvaluations).setArchiveSize(100).setBiSections(2).setMutationOperator(new IntegerPolynomialMutation(1/problemList.get(i).getProblem().getNumberOfVariables(), 20.0)).build();
-//	  algorithms.add(new ExperimentAlgorithm<>(algorithm4, "PAES", problemList.get(i).getTag())); 	
-//	  Algorithm<List<IntegerSolution>> algorithm5 = new RandomSearchBuilder<>(problemList.get(i).getProblem()).setMaxEvaluations(maxEvaluations).build();
-//	  algorithms.add(new ExperimentAlgorithm<>(algorithm5, "RandomSearch", problemList.get(i).getTag()));
-    }
-    return algorithms;
-  }
+	static List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> configureAlgorithmList(
+			List<ExperimentProblem<IntegerSolution>> problemList) {
+		List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithms = new ArrayList<>();
+
+		for (int i = 0; i < problemList.size(); i++) {
+			for (String algoritm : algoritmsChecked) {
+				switch (algoritm) {
+				case "NSGAII":
+					Algorithm<List<IntegerSolution>> algorithm1 = new NSGAIIBuilder<>(
+							problemList.get(i).getProblem(),
+							new IntegerSBXCrossover(0.9, 20.0),
+							new IntegerPolynomialMutation(1/problemList.get(i).getProblem().getNumberOfVariables(), 20.0))
+					.setMaxEvaluations(maxEvaluations)
+					.setPopulationSize(100)
+					.build();
+					algorithms.add(new ExperimentAlgorithm<>(algorithm1, "NSGAII", problemList.get(i).getTag()));
+					break;    
+				case "SMSEMOA":
+					Algorithm<List<IntegerSolution>> algorithm2 = new SMSEMOABuilder<>(problemList.get(i).getProblem(), new IntegerSBXCrossover(0.9, 20.0),new IntegerPolynomialMutation(1/problemList.get(i).getProblem().getNumberOfVariables(), 20.0)).setMaxEvaluations(maxEvaluations).build();      
+					algorithms.add(new ExperimentAlgorithm<>(algorithm2, "SMSEMOA", problemList.get(i).getTag()));
+					break;
+				case "MOCell":
+					Algorithm<List<IntegerSolution>> algorithm3 = new MOCellBuilder<>(problemList.get(i).getProblem(),new IntegerSBXCrossover(0.9, 20.0), new IntegerPolynomialMutation(1/problemList.get(i).getProblem().getNumberOfVariables(), 20.0)).setMaxEvaluations(maxEvaluations).build();
+					algorithms.add(new ExperimentAlgorithm<>(algorithm3, "MOCell", problemList.get(i).getTag()));    
+					break;
+				case "PAES":
+					Algorithm<List<IntegerSolution>> algorithm4 = new PAESBuilder<>(problemList.get(i).getProblem()).setMaxEvaluations(maxEvaluations).setArchiveSize(100).setBiSections(2).setMutationOperator(new IntegerPolynomialMutation(1/problemList.get(i).getProblem().getNumberOfVariables(), 20.0)).build();
+					algorithms.add(new ExperimentAlgorithm<>(algorithm4, "PAES", problemList.get(i).getTag())); 	
+					break;
+				case "RandomSearch":
+					Algorithm<List<IntegerSolution>> algorithm5 = new RandomSearchBuilder<>(problemList.get(i).getProblem()).setMaxEvaluations(maxEvaluations).build();
+					algorithms.add(new ExperimentAlgorithm<>(algorithm5, "RandomSearch", problemList.get(i).getTag()));
+					break;
+				}
+			}
+		}
+		return algorithms;
+	}
 
 }
