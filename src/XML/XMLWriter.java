@@ -1,7 +1,10 @@
 package XML;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -17,8 +20,22 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class XMLWriter {
+	
+	private static String fileName;
+	private static String filePath;
 
     public XMLWriter (String problem_type_selected, ArrayList<String> algoritmsChecked, String n_variables, String filePath) {
+    	String dia = getTime("dd");
+    	String mes = getTime("MM");
+    	String ano = getTime("YY");
+    	String hora = getTime("HH");
+    	String minutos = getTime("mm");
+    	String segundos = getTime("ss");
+    	
+    	
+    	fileName = problem_type_selected + "_" + dia + "/" + mes + "/" + ano + "/" + hora + "/" + minutos + "/" + segundos + ".xml";
+    	this.filePath = System.getProperty("user.home") +"/Desktop/" + fileName;
+    	
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
         try {
@@ -26,9 +43,6 @@ public class XMLWriter {
             Document doc = dBuilder.newDocument();
             //add elements to Document
 
-            //append first child element to root element
-//            String [] algoritmsChecked = {"Cheese", "Pepperoni", "Black Olives"};
-//            doc.appendChild(getProblem(doc, "Integer", algoritmsChecked, "2", "jar ..."));
             doc.appendChild(getProblem(doc, problem_type_selected, algoritmsChecked, n_variables, filePath));
 
             //for output to file, console
@@ -40,7 +54,7 @@ public class XMLWriter {
 
             //write to console or file
             StreamResult console = new StreamResult(System.out);
-            StreamResult file = new StreamResult(new File(System.getProperty("user.home") +"/Desktop/problem.xml"));
+            StreamResult file = new StreamResult(new File(filePath));
 
             //write data
             transformer.transform(source, console);
@@ -82,5 +96,28 @@ public class XMLWriter {
         node.appendChild(doc.createTextNode(value));
         return node;
     }
+    
+    public static String getTime(String format){
+        if (format.isEmpty()) {
+            throw new NullPointerException("A pattern não pode ser NULL!");
+        }
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat formato = new SimpleDateFormat(format);
+        Date data = calendar.getTime();
+        return formato.format(data);
+}
 
+	/**
+	 * @return the fileName
+	 */
+	public static String getFileName() {
+		return fileName;
+	}
+
+	/**
+	 * @return the filePath
+	 */
+	public static String getFilePath() {
+		return filePath;
+	}
 }

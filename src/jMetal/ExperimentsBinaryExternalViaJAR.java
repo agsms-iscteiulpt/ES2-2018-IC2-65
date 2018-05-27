@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JProgressBar;
+
 @SuppressWarnings("unused")
 public class ExperimentsBinaryExternalViaJAR {
 	private static final int INDEPENDENT_RUNS = 2;
@@ -38,17 +40,17 @@ public class ExperimentsBinaryExternalViaJAR {
 
 	private static ArrayList<String> algoritmsChecked = GUI.getAlgoritmsChecked();
 
-	public static void main() throws IOException {
+	public ExperimentsBinaryExternalViaJAR(JProgressBar progressBar) throws IOException {
 		String experimentBaseDirectory = "experimentBaseDirectory";
 
 		List<ExperimentProblem<BinarySolution>> problemList = new ArrayList<>();
-		problemList.add(new ExperimentProblem<>(new MyProblemBinaryExternalViaJAR()));
+		problemList.add(new ExperimentProblem<>(new MyProblemBinaryExternalViaJAR(progressBar)));
 
 		List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> algorithmList =
 				configureAlgorithmList(problemList);
 
 		Experiment<BinarySolution, List<BinarySolution>> experiment =
-				new ExperimentBuilder<BinarySolution, List<BinarySolution>>("MyProblemBinaryExternalViaJAR")
+				new ExperimentBuilder<BinarySolution, List<BinarySolution>>("ExperimentsBinaryExternalViaJAR")
 				.setAlgorithmList(algorithmList)
 				.setProblemList(problemList)
 				.setExperimentBaseDirectory(experimentBaseDirectory)

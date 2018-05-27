@@ -1,27 +1,30 @@
 package jMetal;
 
+import javax.swing.JProgressBar;
+
 public class OptimizationProcess {
 
 	/* O conjunto de algoritmos adequados a cada tipo de problema estao indicados aqui */
 	static String[] AlgorithsForDoubleProblemType = new String[]{"NSGAII","SMSEMOA","GDE3","IBEA","MOCell","MOEAD","PAES","RandomSearch"};
 	static String[] AlgorithsForIntegerProblemType = new String[]{"NSGAII","SMSEMOA","MOCell","PAES","RandomSearch"};
 	static String[] AlgorithsForBinaryProblemType = new String[]{"NSGAII","SMSEMOA","MOCell","MOCH","PAES","RandomSearch","SPEA2"};
-
-	public OptimizationProcess(String type_of_problem) {
+	
+	public OptimizationProcess(String type_of_problem, JProgressBar progressBar) {
 		System.out.println("Starting optimization process");
+		
 		try {
 			switch (type_of_problem) {
 			case "Double":
 				System.out.println("Working...");
-				ExperimentsDoubleExternalViaJAR.main();
+				new ExperimentsDoubleExternalViaJAR(progressBar);
 				break;
 			case "Integer":
 				System.out.println("Working...");
-				ExperimentsIntegeExternalViaJAR.main();
+				new ExperimentsIntegeExternalViaJAR(progressBar);
 				break;
 			case "Binary":
 				System.out.println("Working...");
-				ExperimentsBinaryExternalViaJAR.main();	
+				new ExperimentsBinaryExternalViaJAR(progressBar);	
 				break;
 			}
 			System.out.println("Optimization process finished");

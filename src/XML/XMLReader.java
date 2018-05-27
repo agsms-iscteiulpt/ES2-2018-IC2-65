@@ -13,7 +13,7 @@ public class XMLReader {
 
 	private String problemType;
 	private ArrayList<String> algoritms = new ArrayList<>();
-	private String n_variables;
+	private int n_variables;
 	private String jar_path;
 
 
@@ -33,7 +33,7 @@ public class XMLReader {
 
 				public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
 
-					System.out.println("Start Element :" + qName);
+					System.out.println("Start Element: " + qName);
 
 					if (qName.equalsIgnoreCase("problemType")) {
 						bproblemType = true;
@@ -56,32 +56,32 @@ public class XMLReader {
 				public void endElement(String uri, String localName,
 						String qName) throws SAXException {
 
-					System.out.println("End Element :" + qName);
+					System.out.println("End Element: " + qName);
 
 				}
 
 				public void characters(char ch[], int start, int length) throws SAXException {
 
 					if (bproblemType) {
-						System.out.println("problemType : " + new String(ch, start, length));
+						System.out.println("problemType: " + new String(ch, start, length));
 						problemType = new String(ch, start, length);
 						bproblemType = false;
 					}
 
 					if (balgoritm) {
-						System.out.println("algoritm : " + new String(ch, start, length));
+						System.out.println("algoritm: " + new String(ch, start, length));
 						algoritms.add(new String(ch, start, length));
 						balgoritm = false;
 					}
 
 					if (bn_variables) {
-						System.out.println("n_variables : " + new String(ch, start, length));
-						n_variables = new String(ch, start, length);
+						System.out.println("n_variables: " + new String(ch, start, length));
+						n_variables = Integer.parseInt(new String(ch, start, length));
 						bn_variables = false;
 					}
 
 					if (bjar_path) {
-						System.out.println("jar_path : " + new String(ch, start, length));
+						System.out.println("jar_path: " + new String(ch, start, length));
 						jar_path = new String(ch, start, length);
 						bjar_path = false;
 					}
@@ -106,7 +106,7 @@ public class XMLReader {
 		return algoritms;
 	}
 	
-	public String getN_variables() {
+	public int getN_variables() {
 		return n_variables;
 	}
 	

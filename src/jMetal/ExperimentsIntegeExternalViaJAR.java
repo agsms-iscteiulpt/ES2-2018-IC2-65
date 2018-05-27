@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JProgressBar;
+
 @SuppressWarnings("unused")
 public class ExperimentsIntegeExternalViaJAR {
 	private static final int INDEPENDENT_RUNS = 2;
@@ -31,11 +33,11 @@ public class ExperimentsIntegeExternalViaJAR {
 
 	private static ArrayList<String> algoritmsChecked = GUI.getAlgoritmsChecked();
 
-	public static void main() throws IOException {
+	public ExperimentsIntegeExternalViaJAR(JProgressBar progressBar) throws IOException {
 		String experimentBaseDirectory = "experimentBaseDirectory";
 
 		List<ExperimentProblem<IntegerSolution>> problemList = new ArrayList<>();
-		problemList.add(new ExperimentProblem<>(new MyProblemIntegerExternalViaJAR()));
+		problemList.add(new ExperimentProblem<>(new MyProblemIntegerExternalViaJAR(progressBar)));
 
 		List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithmList =
 				configureAlgorithmList(problemList);

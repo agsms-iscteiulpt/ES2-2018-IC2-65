@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JProgressBar;
+
 import GUI.*;
 
 @SuppressWarnings("unused")
@@ -37,11 +39,11 @@ public class ExperimentsDoubleExternalViaJAR {
 
 	private static ArrayList<String> algoritmsChecked = GUI.getAlgoritmsChecked();
 
-	public static void main() throws IOException {
+	public ExperimentsDoubleExternalViaJAR(JProgressBar progressBar) throws IOException {
 		String experimentBaseDirectory = "experimentBaseDirectory";
 
 		List<ExperimentProblem<DoubleSolution>> problemList = new ArrayList<>();
-		problemList.add(new ExperimentProblem<>(new MyProblemDoubleExternalViaJAR()));
+		problemList.add(new ExperimentProblem<>(new MyProblemDoubleExternalViaJAR(progressBar)));
 
 		List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList =
 				configureAlgorithmList(problemList);

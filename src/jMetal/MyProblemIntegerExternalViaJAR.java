@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JProgressBar;
 import javax.swing.JTable;
 
 /* Implementa��o de um problema do tipo Integer que executa o .jar externo
@@ -23,11 +24,14 @@ public class MyProblemIntegerExternalViaJAR extends AbstractIntegerProblem {
 	private static int n_variables = GUI.getN_variables();
 
 	private static JTable variableTable;  
+	
+	private JProgressBar progressBar;
 
-	public MyProblemIntegerExternalViaJAR() throws JMetalException {
+	public MyProblemIntegerExternalViaJAR(JProgressBar progressBar) throws JMetalException {
 		// 10 decision variables by default  
 		// this(10);
 		this(n_variables);
+		this.progressBar = progressBar;
 	}
 
 	public MyProblemIntegerExternalViaJAR(Integer numberOfVariables) throws JMetalException {
@@ -66,7 +70,7 @@ public class MyProblemIntegerExternalViaJAR extends AbstractIntegerProblem {
 		try {
 			String line;
 			System.out.println(solutionString);
-			Process p = Runtime.getRuntime().exec("java -jar " + GUI.getFilePath() + " " + solutionString);
+			Process p = Runtime.getRuntime().exec("java -jar " + GUI.getFileJARPath() + " " + solutionString);
 			BufferedReader brinput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			while ((line = brinput.readLine()) != null) {
 				evaluationResultString+=line;
@@ -82,6 +86,12 @@ public class MyProblemIntegerExternalViaJAR extends AbstractIntegerProblem {
 		// It is assumed that all evaluated criteria are returned in the same result string
 		for (int i = 0; i < solution.getNumberOfObjectives(); i++) {
 			solution.setObjective(i, Integer.parseInt(individualEvaluationCriteria[i]));    
-		}	    
-	}	  
+		}	
+		increaseProgressBar();
+	}	
+	
+	private void increaseProgressBar() {
+		progressBar.setValue(progressBar.getValue() + 1);
+		progressBar.update(progressBar.getGraphics());
+	}
 }

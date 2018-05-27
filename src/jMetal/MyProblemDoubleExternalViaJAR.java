@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JProgressBar;
 import javax.swing.JTable;
 
 import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
@@ -23,10 +24,13 @@ public class MyProblemDoubleExternalViaJAR extends AbstractDoubleProblem {
 
 	private static JTable variableTable;
 
-	public MyProblemDoubleExternalViaJAR() {
+	private JProgressBar progressBar;
+
+	public MyProblemDoubleExternalViaJAR(JProgressBar progressBar) {
 		// 10 variables (anti-spam filter rules) by default 
 		// this(10);
 		this(n_variables);
+		this.progressBar = progressBar;
 	}
 
 	public MyProblemDoubleExternalViaJAR(Integer numberOfVariables) {
@@ -46,11 +50,6 @@ public class MyProblemDoubleExternalViaJAR extends AbstractDoubleProblem {
 			upperLimit.add(max);
 		}
 
-		//		for (int i = 0; i < getNumberOfVariables(); i++) {
-		//			lowerLimit.add(-5.0);
-		//			upperLimit.add(5.0);
-		//		}
-
 		setLowerLimit(lowerLimit);
 		setUpperLimit(upperLimit);	    	    
 	}
@@ -64,7 +63,7 @@ public class MyProblemDoubleExternalViaJAR extends AbstractDoubleProblem {
 		try {
 			String line;
 			System.out.println(solutionString);
-			Process p = Runtime.getRuntime().exec("java -jar " + GUI.getFilePath() + " " + solutionString);
+			Process p = Runtime.getRuntime().exec("java -jar " + GUI.getFileJARPath() + " " + solutionString);
 			BufferedReader brinput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			while ((line = brinput.readLine()) != null) {
 				evaluationResultString+=line;
@@ -75,11 +74,17 @@ public class MyProblemDoubleExternalViaJAR extends AbstractDoubleProblem {
 		catch (Exception err) { 
 			err.printStackTrace(); 
 		}
-		
+
 		String[] individualEvaluationCriteria = evaluationResultString.split("\\s+");
 		// It is assumed that all evaluated criteria are returned in the same result string
 		for (int i = 0; i < solution.getNumberOfObjectives(); i++) {
 			solution.setObjective(i, Double.parseDouble(individualEvaluationCriteria[i]));
 		}	
+		increaseProgressBar();
+	}
+
+	private void increaseProgressBar() {
+		progressBar.setValue(progressBar.getValue() + 1);
+		progressBar.update(progressBar.getGraphics());
 	}
 }

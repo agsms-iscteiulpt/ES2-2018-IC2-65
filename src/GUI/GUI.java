@@ -1,13 +1,13 @@
 package GUI;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.BoxLayout;
@@ -35,10 +35,12 @@ import javax.swing.table.DefaultTableModel;
 import Email.Send_Email;
 import FrequentQuestions.FrequentQuestions;
 import FrequentQuestions.Read_FrequentQuestions;
+//import Output.CSVFileWriter;
 import Users.Database;
 import Users.General_user;
+import XML.XMLReader;
+import XML.XMLWriter;
 import jMetal.OptimizationProcess;
-import XML.*;
 
 public class GUI implements ActionListener {
 
@@ -56,8 +58,9 @@ public class GUI implements ActionListener {
 	private JCheckBox admin_cb;
 	private JCheckBox user_cb;
 
+	private JProgressBar progressBar;
+
 	private static String problem_type_selected;
-//	private JRadioButton problem_type;
 	private JRadioButton problem_type_binary;
 	private JRadioButton problem_type_integer;
 	private JRadioButton problem_type_double;
@@ -69,6 +72,10 @@ public class GUI implements ActionListener {
 
 	private JTextField username_tf;
 	private JPasswordField password_pf;
+	
+	private String email = null;
+	private String fileNameXML;
+	private String filePathXML;
 
 	private static String criteria1_name;
 	private static String criteria2_name;
@@ -77,7 +84,8 @@ public class GUI implements ActionListener {
 	private boolean correctFile;
 	private boolean correctNumber;
 
-	private static File file;
+	private static File fileJAR;
+	private static File fileXML;
 	private static JTextField textFieldFile;
 	private static JTable variableName_table;
 
@@ -88,6 +96,9 @@ public class GUI implements ActionListener {
 
 	String[] ProblemType = new String[]{"Binary", "Double", "Integer"};
 
+	/**
+	 * Constructor
+	 */
 	public GUI() {
 		Database database = new Database();
 
@@ -102,6 +113,9 @@ public class GUI implements ActionListener {
 		windowAutentication.pack();
 	}
 
+	/**
+	 * Creates log in window
+	 */
 	private void login_window() {
 		//Log in window
 		windowAutentication = new JFrame("Log in");
@@ -172,8 +186,19 @@ public class GUI implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(user_exists() == true) {
-					JOptionPane.showMessageDialog(null, "Succeeded!");
-					windowProblem.setVisible(true);
+//					JOptionPane.showMessageDialog(null, "Succeeded!");
+					
+					JTextField tf_email = new JTextField();
+					Object[] message = {
+							"Email:", tf_email,
+					};
+					int option = JOptionPane.showConfirmDialog(null, message, "Enter your email", JOptionPane.OK_CANCEL_OPTION);
+					if (option == JOptionPane.OK_OPTION && !tf_email.getText().equals("")) {
+						windowProblem.setVisible(true);
+						setEmail(tf_email.getText());
+					} else {
+						JOptionPane.showMessageDialog(null, "Need to introduce an email for application purposes!");
+					}
 				} else {
 					check_wrong_permissions();
 				}
@@ -206,20 +231,23 @@ public class GUI implements ActionListener {
 		if(user_cb.isSelected()) {
 			for (General_user  admin: admins) {													
 				if(admin.getUsername().equals(username_tf.getText()) && admin.getPassword().equals(password_pf.getText())) 
-					JOptionPane.showMessageDialog(null, "Wrong permissions! You're an administrator!");
+					JOptionPane.showMessageDialog(null, "Wrong permissions! You're an administrator!", "Message", JOptionPane.ERROR_MESSAGE);
 			}
 
 			if(admin_cb.isSelected()) {
 				for (General_user  user: users) {													
 					if(user.getUsername().equals(username_tf.getText()) && user.getPassword().equals(password_pf.getText())) 
-						JOptionPane.showMessageDialog(null, "Wrong permissions! You are a user!");
+						JOptionPane.showMessageDialog(null, "Wrong permissions! You are a user!", "Message", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Wrong password or username! \n Please try again!");
+			JOptionPane.showMessageDialog(null, "Wrong password or username! \n Please try again!", "Message", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
+	/**
+	 * Creates problem description window
+	 */
 	private void problem_description_window() {
 		//Problem description window
 		windowProblem = new JFrame("Problem description");
@@ -289,6 +317,9 @@ public class GUI implements ActionListener {
 		});
 	}
 
+	/**
+	 * Creates help window
+	 */
 	private void help_window () {
 		//Help window
 		windowHelp = new JFrame("Help");
@@ -332,14 +363,6 @@ public class GUI implements ActionListener {
 		email_tf_panel.setLayout(new BorderLayout());
 		email_panel.add(email_tf_panel, BorderLayout.NORTH);
 
-		JPanel from_panel = new JPanel();
-		from_panel.setLayout(new BorderLayout());
-		email_tf_panel.add(from_panel, BorderLayout.NORTH);
-		JLabel from_jl = new JLabel("From:     ");
-		from_panel.add(from_jl, BorderLayout.WEST);
-		JTextField from_tf = new JTextField();
-		from_panel.add(from_tf, BorderLayout.CENTER);
-
 		JPanel subject_panel = new JPanel();
 		subject_panel.setLayout(new BorderLayout());
 		email_tf_panel.add(subject_panel, BorderLayout.CENTER);
@@ -365,18 +388,21 @@ public class GUI implements ActionListener {
 		send_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(from_tf.getText().equals("") || subject_tf.getText().equals("") || body_tf.getText().equals("")) {
+				if(subject_tf.getText().equals("") || body_tf.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Fields can not be empty.");
 				} else {
 					@SuppressWarnings("unused")
-					Send_Email send_Email = new Send_Email(from_tf.getText(), subject_tf.getText(), body_tf.getText());
+					Send_Email send_Email = new Send_Email(email, subject_tf.getText(), body_tf.getText());
 				}
 			}
 		});
 	}
 
+	/**
+	 * Creates algorithm window
+	 */
 	private void algoritm_window () {
-		windowAlgoritm = new JFrame("Algoritm");
+		windowAlgoritm = new JFrame("Algorithm");
 		windowAlgoritm.setSize(350, 350);
 		windowAlgoritm.setLocationRelativeTo(null);
 		windowAlgoritm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -421,7 +447,6 @@ public class GUI implements ActionListener {
 		time_textfield.add(empty1);
 		time_panel.add(time_textfield, BorderLayout.EAST);
 
-
 		JPanel nVariable_panel = new JPanel();
 		time_variable_panel.add(nVariable_panel, BorderLayout.SOUTH);
 
@@ -433,21 +458,22 @@ public class GUI implements ActionListener {
 		nVariable_panel.add(readXML_button);
 
 		readXML_button.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.showOpenDialog(null);
 				//selecionar somente ficheiros
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				file = fileChooser.getSelectedFile();
-				
-				XMLReader xml = new XMLReader(file);
-				
+				fileXML = fileChooser.getSelectedFile();
+
+				XMLReader xml = new XMLReader(fileXML);
+
 				String problemType = xml.getProblemType();
 				ArrayList<String> algoritms = xml.getAlgoritms();
-				String n_variable = xml.getN_variables();
+				int n_variable = xml.getN_variables();
 				String jarPath = xml.getJar_path();
-				
+
 				if (problemType.equals("Binary")) {
 					problem_type_binary.setSelected(true);
 					problem_type_binary.doClick();
@@ -458,24 +484,23 @@ public class GUI implements ActionListener {
 					problem_type_double.setSelected(true);
 					problem_type_double.doClick();
 				}
-				
+
 				for (JCheckBox cb_algoritm : algoritms_list) {
 					for (String algoritm_string : algoritms) {
 						if(cb_algoritm.getLabel().equals(algoritm_string)) {
-//							cb_algoritm.setCheckboxGroup(null);
 							algoritmsChecked.add(algoritm_string);
 							cb_algoritmsChecked.add(cb_algoritm);
 						}
 					}
 				}
-				
+
 				for (JCheckBox cb_algoritmChecked : cb_algoritmsChecked) {
 					JCheckBox checkBox = cb_algoritmChecked;
 					checkBox.doClick();
-//					fireContentsChanged(this, index, index);
+					//					fireContentsChanged(this, index, index);
 				}
-				nVariable_tf.setText(n_variable);
-				
+				nVariable_tf.setText(Integer.toString(n_variable));
+
 				textFieldFile.setText(jarPath);
 			}
 		});
@@ -507,8 +532,8 @@ public class GUI implements ActionListener {
 				fileChooser.showOpenDialog(null);
 				//selecionar somente ficheiros
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				file = fileChooser.getSelectedFile();
-				textFieldFile.setText(file.getAbsolutePath());
+				fileJAR = fileChooser.getSelectedFile();
+				textFieldFile.setText(fileJAR.getAbsolutePath());
 			}
 		});
 
@@ -531,13 +556,13 @@ public class GUI implements ActionListener {
 		saveFile_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				checkIfAllRight();
 				algoritmsChecked();
-				String n_variables_String = nVariable_tf.getText();
-				new XMLWriter(problem_type_selected, algoritmsChecked, n_variables_String, getFilePath());
+				if(checkIfAllRight() == true) {
+					String n_variables_String = nVariable_tf.getText();
+					new XMLWriter(problem_type_selected, algoritmsChecked, n_variables_String, getFileJARPath());
+				}
 			}
 		});
-
 
 		JPanel help_execute_panel = new JPanel();
 		help_execute_panel.setLayout(new BorderLayout());
@@ -551,8 +576,12 @@ public class GUI implements ActionListener {
 		execute_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				checkIfAllRight();
+				String n_variables_String = nVariable_tf.getText();
+				new XMLWriter(problem_type_selected, algoritmsChecked, n_variables_String, getFileJARPath());
+				fileNameXML = XMLWriter.getFileName();
+				filePathXML = XMLWriter.getFilePath();
 				algoritmsChecked();
+				checkIfAllRight();
 			}
 		});
 
@@ -564,7 +593,11 @@ public class GUI implements ActionListener {
 		});
 	}
 
-	private void checkIfAllRight () {
+	/**
+	 * Checks if type of problem, algorithms, number of variables and file are inserted
+	 * @return boolean
+	 */
+	private boolean checkIfAllRight () {
 		String n_variables_String = nVariable_tf.getText();
 		String file_Name = textFieldFile.getText();
 		correctFile = false;
@@ -601,9 +634,17 @@ public class GUI implements ActionListener {
 			n_variables = Integer.parseInt(n_variables_String);
 			decisionVariable_window();
 			windowDecisionVariable.setVisible(true);
+			return true;
+		} else {
+			return false;
 		}
 	}
 
+	/**
+	 * Checks if number inserted it's a number or not
+	 * @param n_variables_String
+	 * @return boolean
+	 */
 	private boolean isNumber (String n_variables_String) {
 		boolean number = false;
 		if(!n_variables_String.equals("")) {
@@ -622,6 +663,10 @@ public class GUI implements ActionListener {
 		return false;
 	}
 
+	/**
+	 * Check if any problem type was chosen
+	 * @return boolean
+	 */
 	private boolean problemWasChosen () {
 		if (problem_type_selected != null) {
 			return true;
@@ -629,6 +674,10 @@ public class GUI implements ActionListener {
 		return false;
 	}
 
+	/**
+	 * Checks if any algoritm was chosen
+	 * @return boolean
+	 */
 	private boolean algoritmWasChosen () {
 		if (!algoritmsChecked.isEmpty()) {
 			return true;
@@ -636,6 +685,9 @@ public class GUI implements ActionListener {
 		return false;
 	}
 
+	/**
+	 * Creates a panel with problem type and algoritms associated
+	 */
 	private void problemType_and_Algoritms () {
 		//Problem Type
 		JPanel problemType_panel = new JPanel();
@@ -644,34 +696,31 @@ public class GUI implements ActionListener {
 
 		groupProblems = new ButtonGroup();
 
-//		for (String type : ProblemType) {
-//			problem_type = new JRadioButton(type);
-//			problem_type.setActionCommand(type);
-//			groupProblems.add(problem_type);
-//			problemType_panel.add(problem_type);
-//			//Register a listener for the radio buttons
-//			problem_type.addActionListener(this);
-//		}
+		problem_type_binary = new JRadioButton("Binary");
+		problem_type_double = new JRadioButton("Double");
+		problem_type_integer = new JRadioButton("Integer");
 		
-			problem_type_binary = new JRadioButton("Binary");
-			problem_type_integer = new JRadioButton("Integer");
-			problem_type_double = new JRadioButton("Double");
-			problem_type_binary.setActionCommand("Binary");
-			problem_type_integer.setActionCommand("Integer");
-			problem_type_double.setActionCommand("Double");
-			groupProblems.add(problem_type_binary);
-			groupProblems.add(problem_type_integer);
-			groupProblems.add(problem_type_double);
-			problemType_panel.add(problem_type_binary);
-			problemType_panel.add(problem_type_integer);
-			problemType_panel.add(problem_type_double);
-			//Register a listener for the radio buttons
-			problem_type_binary.addActionListener(this);
-			problem_type_integer.addActionListener(this);
-			problem_type_double.addActionListener(this);
+		problem_type_binary.setActionCommand("Binary");
+		problem_type_double.setActionCommand("Double");
+		problem_type_integer.setActionCommand("Integer");
+		
+		groupProblems.add(problem_type_binary);
+		groupProblems.add(problem_type_double);
+		groupProblems.add(problem_type_integer);
+		
+		problemType_panel.add(problem_type_binary);
+		problemType_panel.add(problem_type_double);
+		problemType_panel.add(problem_type_integer);
+
+		//Register a listener for the radio buttons
+		problem_type_binary.addActionListener(this);
+		problem_type_integer.addActionListener(this);
+		problem_type_double.addActionListener(this);
 	}
 
-	//Listens to the radio buttons
+	/**
+	 * Listens to the radio buttons
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String type_name = e.getActionCommand();
@@ -704,6 +753,11 @@ public class GUI implements ActionListener {
 		problemType_and_Algoritms_panel.repaint();
 	}
 
+	/**
+	 * Returns a panel with algoritms of an especific problem type
+	 * @param algoritmsList
+	 * @return ProblemAlgoritms_panel
+	 */
 	public JPanel show_algoritms (String [] algoritmsList) {
 		//Algoritms of an especific problem type
 		ProblemAlgoritms_panel = new JPanel();
@@ -719,6 +773,9 @@ public class GUI implements ActionListener {
 		return ProblemAlgoritms_panel;
 	}
 
+	/**
+	 * Creates decision variable window
+	 */
 	private void decisionVariable_window () {
 		windowDecisionVariable = new JFrame("Decision Variable");
 		windowDecisionVariable.setSize(600, 350);
@@ -735,31 +792,42 @@ public class GUI implements ActionListener {
 		JButton ok_button = new JButton("OK");
 		decisionVariable_panel.add(ok_button, BorderLayout.EAST);
 
-		JProgressBar pb = new JProgressBar();
-		pb.setMinimum(0);
-		pb.setMaximum(100);
-		pb.setStringPainted(true);
-		decisionVariable_panel.add(pb, BorderLayout.SOUTH);
+		progressBar = new JProgressBar(0, n_variables * 1000 * algoritmsChecked.size());
+		decisionVariable_panel.add(progressBar, BorderLayout.SOUTH);
 
 		variableName_table_data ();
 
 		ok_button.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				int pb_value = pb.getValue();
-				pb.setValue(pb_value + 1);
-				pb.setStringPainted(true);
+			public void actionPerformed(ActionEvent e) {	
+				System.out.println("filename:" + fileNameXML);
+				System.out.println("filepath:" + filePathXML);
+				
+				System.out.println("jar:" + getFileJARPath());
+				
+				System.out.println("nv:" + n_variables);
+//				new Send_Email(email, problem_type_selected, fileNameXML, filePathXML);
+				
+				new OptimizationProcess(problem_type_selected, progressBar);
 
-
-				//				ProgressBar pb = new ProgressBar();
-				//				pb.show();
-				//				pb.start();
-				new OptimizationProcess(problem_type_selected);
+				progressBar.setValue(n_variables * 1000 * algoritmsChecked.size());
+				progressBar.update(progressBar.getGraphics());
+				JOptionPane.showMessageDialog(null, "Finished!");
+				
+//				try {
+//					CSVFileWriter csv = new CSVFileWriter();
+//					csv.start();
+//				} catch (Exception e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 			}
 		});
-
 	}
 
+	/**
+	 * Creates variable table
+	 */
 	private void variableName_table_data () {
 		JPanel variableName_table_panel = new JPanel();
 		variableName_table_panel.setLayout(new GridLayout(1, 1));
@@ -820,39 +888,87 @@ public class GUI implements ActionListener {
 
 	}
 
+	/**
+	 * Checks which checkbox is selected and puts it on the list
+	 */
+	@SuppressWarnings("deprecation")
 	private void algoritmsChecked () {
 		for (JCheckBox algoritm : algoritms_list) {
 			if(algoritm.isSelected()==true) {
 				algoritmsChecked.add(algoritm.getLabel());
+				algoritmsChecked = (ArrayList<String>) algoritmsChecked.stream().distinct().collect(Collectors.toList());
 			}
 		}
 	}	
 
+	/**
+	 * Returns an ArrayList with algoritms that were checked by client
+	 * @return algoritmsChecked
+	 */
 	public static ArrayList<String> getAlgoritmsChecked() {
 		return algoritmsChecked;
 	}
 
-	public static String getFilePath() {
-		return file.getAbsolutePath();
+	/**
+	 * Returns file path
+	 * @return file Absolute Path
+	 */
+	public static String getFileJARPath() {
+		return fileJAR.getAbsolutePath();
 	}
 
+	/**
+	 * Returns number of variables chosen
+	 * @return n_variables
+	 */
 	public static int getN_variables() {
 		return n_variables;
 	}
 
+	/**
+	 * Returns Variables JTable 
+	 * @return variableName_table
+	 */
 	public static JTable getVariableName_table() {
 		return variableName_table;
 	}
 
+	/**
+	 * Returns problem type that is selected
+	 * @return problem_type_selected
+	 */
 	public static String getProblem_type_selected() {
 		return problem_type_selected;
 	}
 
+	/**
+	 * Returns name of criteria 1
+	 * @return criteria1_name
+	 */
 	public static String getCriteria1_name() {
 		return criteria1_name;
 	}
 
+	/**
+	 * Returns name of criteria 2
+	 * @return criteria2_name
+	 */
 	public static String getCriteria2_name() {
 		return criteria2_name;
 	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 }
