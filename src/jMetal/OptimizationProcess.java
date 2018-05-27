@@ -29,7 +29,7 @@ public class OptimizationProcess {
 			}
 			System.out.println("Optimization process finished");
 		} catch (Exception e) {
-			System.out.println(e);
+//			System.out.println(e);
 			e.printStackTrace();
 			// TODO: handle exception
 		}

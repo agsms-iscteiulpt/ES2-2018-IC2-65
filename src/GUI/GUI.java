@@ -35,6 +35,7 @@ import javax.swing.table.DefaultTableModel;
 import Email.Send_Email;
 import FrequentQuestions.FrequentQuestions;
 import FrequentQuestions.Read_FrequentQuestions;
+import Output.CSVFileWriter;
 //import Output.CSVFileWriter;
 import Users.Database;
 import Users.General_user;
@@ -814,13 +815,13 @@ public class GUI implements ActionListener {
 				progressBar.update(progressBar.getGraphics());
 				JOptionPane.showMessageDialog(null, "Finished!");
 				
-//				try {
-//					CSVFileWriter csv = new CSVFileWriter();
-//					csv.start();
-//				} catch (Exception e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
+				try {
+					CSVFileWriter csv = new CSVFileWriter();
+					csv.start();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 	}
