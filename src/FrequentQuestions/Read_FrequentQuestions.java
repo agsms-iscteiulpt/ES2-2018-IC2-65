@@ -12,7 +12,7 @@ public class Read_FrequentQuestions {
 	public Read_FrequentQuestions() {
 		try {
 			@SuppressWarnings("resource")
-			Scanner scanner = new Scanner(new FileReader("FrequentQuestions.txt"))
+			Scanner scanner = new Scanner(new FileReader(System.getProperty("user.home") + "/git/ES2-2018-IC2-65/FrequentQuestions.txt"))
 					.useDelimiter(" ");
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();

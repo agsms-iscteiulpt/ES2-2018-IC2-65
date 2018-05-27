@@ -17,7 +17,7 @@ public class Database {
 	@SuppressWarnings("resource")
 	private void read_database()  {	
 		try {
-			Scanner scanner = new Scanner(new FileReader("Database.txt"))
+			Scanner scanner = new Scanner(new FileReader(System.getProperty("user.home") + "/git/ES2-2018-IC2-65/Database.txt"))
 					.useDelimiter(" ");
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
