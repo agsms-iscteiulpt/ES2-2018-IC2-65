@@ -25,6 +25,7 @@ public class XMLWriter {
 	private static String filePath;
 	
 
+	@SuppressWarnings("static-access")
 	public XMLWriter (String problem_type_selected, ArrayList<String> algoritmsChecked, String n_variables, String filePath) {
 
 		String fileSuffix = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
