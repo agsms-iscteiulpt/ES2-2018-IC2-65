@@ -13,7 +13,7 @@ import org.uma.jmetal.solution.DoubleSolution;
 
 import GUI.*;
 
-/* Implementa��o de um problema do tipo Double que executa o .jar externo
+/* Implementacao de um problema do tipo Double que executa o .jar externo
    Kursawe.jar e pode ser usado como um dos problema de teste indicados 
    no encunciado do trabalho */
 

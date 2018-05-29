@@ -3,7 +3,9 @@ package Output;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import GUI.GUI;
 
@@ -50,8 +52,9 @@ public class CSVFileWriter {
 		FileWriter fileWriter = null;
 
 		try {
-//			fileWriter = new FileWriter(new File(System.getProperty("user.home") +"/Desktop/bestSolutions.csv"));
-			fileWriter = new FileWriter(new File("bestSolutions.csv"));
+			String fileSuffix = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+			fileWriter = new FileWriter(new File(System.getProperty("user.home") + "\\Desktop\\" + "bestSolutions_" + fileSuffix + ".csv"));
+//			fileWriter = new FileWriter(new File("bestSolutions.csv"));
 
 			
 			//Write the CSV file header

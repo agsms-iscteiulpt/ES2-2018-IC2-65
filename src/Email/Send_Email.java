@@ -1,13 +1,11 @@
 package Email;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
@@ -51,10 +49,6 @@ public class Send_Email {
 
 			Transport.send(message);
 
-			//			JOptionPane.showMessageDialog(null, "E-mail successfully sent!");
-
-			//			System.out.println("Email sent!");
-
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
@@ -97,35 +91,22 @@ public class Send_Email {
 			}
 		});
 
-		//		try {
-		//			Message message = new MimeMessage(session);
-		//			message.setFrom(new InternetAddress("mafalda.ambc@gmail.com"));
-		//			message.setRecipients(Message.RecipientType.TO,
-		//					InternetAddress.parse("mafalda.ambc@gmail.com"));
-		//			message.setSubject(subject);
-		//			message.setText("Esta mensagem foi enviada pelo utilizador com o email: " + email + "\n" + text);
-		//
-		//			Transport.send(message);
-		//
-		//		} catch (MessagingException e) {
-		//			throw new RuntimeException(e);
-		//		}
 		try {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			Date date = new Date();
-			//			System.out.println(dateFormat.format(date));
-			String subject = "Otimização em curso: " + problem_type + " " + dateFormat.format(date);
+			String subject = "Otimizacao em curso: " + problem_type + " " + dateFormat.format(date);
 
 			// create a message
 			MimeMessage msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress("mafalda.ambc@gmail.com"));
 			InternetAddress[] address = {new InternetAddress(email)};
+			msg.addRecipient(RecipientType.BCC, new InternetAddress("mafalda.ambc@gmail.com"));
 			msg.setRecipients(Message.RecipientType.TO, address);
 			msg.setSubject(subject);
 
 			// create and fill the first message part
 			MimeBodyPart mbp1 = new MimeBodyPart();
-			mbp1.setText("Muito obrigado por usar esta plataforma de otimização. Será informado por email sobre o progresso do processo de otimização, quando o processo de otimização tiver atingido 25%, 50%, 75% do total do (número de avaliações ou) tempo estimado, e também quando o processo tiver terminado, com sucesso ou devido à ocorrência de erros.");
+			mbp1.setText("Muito obrigado por usar esta plataforma de otimizacao. Sera informado por email sobre o progresso do processo de otimizacao, quando o processo de otimizacao tiver atingido 25%, 50%, 75% do total do (numero de avaliacoes ou) tempo estimado, e tambem quando o processo tiver terminado, com sucesso ou devido a� ocorrencia de erros.");
 
 			// create the second message part
 			MimeBodyPart mbp2 = new MimeBodyPart();
@@ -158,44 +139,5 @@ public class Send_Email {
 		}
 		
 		System.out.println("Email sent!");
-
-
-		//		try {
-		//			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		//			Date date = new Date();
-		////			System.out.println(dateFormat.format(date));
-		//			
-		//			Message message = new MimeMessage(session);
-		//			message.setFrom(new InternetAddress("mafalda.ambc@gmail.com"));
-		//			message.addRecipient(RecipientType.BCC, new InternetAddress("mafalda.ambc@gmail.com"));
-		//			message.setRecipients(Message.RecipientType.TO,
-		//					InternetAddress.parse(email));
-		//			message.setSubject("Otimização em curso: " + problem_type + " " + dateFormat.format(date));
-		//			
-		//			Multipart multipart = new MimeMultipart();
-		//
-		//	        MimeBodyPart textBodyPart = new MimeBodyPart();
-		//	        textBodyPart.setText("Muito obrigado por usar esta plataforma de otimização. Será informado por email sobre o progresso do processo de otimização, quando o processo de otimização tiver atingido 25%, 50%, 75% do total do (número de avaliações ou) tempo estimado, e também quando o processo tiver terminado, com sucesso ou devido à ocorrência de erros.");
-		//
-		//	        MimeBodyPart attachmentBodyPart= new MimeBodyPart();
-		//	        DataSource source = new FileDataSource(filePath); // ex : "C:\\test.pdf"
-		//	        attachmentBodyPart.setDataHandler(new DataHandler(source));
-		//	        attachmentBodyPart.setFileName(fileName); // ex : "test.pdf"
-		//
-		//	        multipart.addBodyPart(textBodyPart);  // add the text part
-		//	        multipart.addBodyPart(attachmentBodyPart); // add the attachement part
-		//
-		//	        message.setContent(multipart);
-		//			
-		//			Transport.send(message);
-		//			
-		////			JOptionPane.showMessageDialog(null, "E-mail successfully sent!");
-		//
-		//			System.out.println("Email sent!");
-		//
-		//		} catch (MessagingException e) {
-		//			throw new RuntimeException(e);
-		//		}
-
 	}
 }

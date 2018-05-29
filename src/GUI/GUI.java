@@ -289,7 +289,7 @@ public class GUI implements ActionListener {
 		JButton help_button = new JButton("Help");
 		help_button.setForeground(Color.RED);
 		help_continue_panel.add(help_button, BorderLayout.WEST);
-		JButton confirm_button = new JButton("Confirm ➜");
+		JButton confirm_button = new JButton("Confirm >");
 		help_continue_panel.add(confirm_button, BorderLayout.EAST);
 
 		help_button.addActionListener(new ActionListener() {
@@ -577,12 +577,15 @@ public class GUI implements ActionListener {
 		execute_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String n_variables_String = nVariable_tf.getText();
-				new XMLWriter(problem_type_selected, algoritmsChecked, n_variables_String, getFileJARPath());
+				algoritmsChecked();
+				if(checkIfAllRight()) {
+					String n_variables_String = nVariable_tf.getText();
+					new XMLWriter(problem_type_selected, algoritmsChecked, n_variables_String, getFileJARPath());
+					decisionVariable_window();
+					windowDecisionVariable.setVisible(true);
+				}
 				fileNameXML = XMLWriter.getFileName();
 				filePathXML = XMLWriter.getFilePath();
-				algoritmsChecked();
-				checkIfAllRight();
 			}
 		});
 
@@ -633,8 +636,6 @@ public class GUI implements ActionListener {
 			correctFile = true;
 			correctNumber = true;
 			n_variables = Integer.parseInt(n_variables_String);
-			decisionVariable_window();
-			windowDecisionVariable.setVisible(true);
 			return true;
 		} else {
 			return false;
@@ -801,13 +802,7 @@ public class GUI implements ActionListener {
 		ok_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {	
-				System.out.println("filename:" + fileNameXML);
-				System.out.println("filepath:" + filePathXML);
-				
-				System.out.println("jar:" + getFileJARPath());
-				
-				System.out.println("nv:" + n_variables);
-//				new Send_Email(email, problem_type_selected, fileNameXML, filePathXML);
+				new Send_Email(email, problem_type_selected, fileNameXML, filePathXML);
 				
 				new OptimizationProcess(problem_type_selected, progressBar);
 
@@ -915,7 +910,7 @@ public class GUI implements ActionListener {
 	 * @return file Absolute Path
 	 */
 	public static String getFileJARPath() {
-		return fileJAR.getAbsolutePath();
+		return textFieldFile.getText();
 	}
 
 	/**
