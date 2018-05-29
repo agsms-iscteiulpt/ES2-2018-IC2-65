@@ -59,7 +59,7 @@ public class Send_Email {
 			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse(email));
 			message.setSubject(subject);
-			message.setText("Enviou a seguinte mensagem para o administrador da plataforma de otimização: " + "\n" + text);
+			message.setText("Enviou a seguinte mensagem para o administrador da plataforma de otimizacao: " + "\n" + text);
 
 			Transport.send(message);
 
