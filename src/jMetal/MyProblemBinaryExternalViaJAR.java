@@ -27,8 +27,8 @@ public class MyProblemBinaryExternalViaJAR extends AbstractBinaryProblem {
 	
 	public MyProblemBinaryExternalViaJAR(JProgressBar progressBar) throws JMetalException {
 		// 10 decision variables by default  
-		// this(10);
-		this(n_variables);
+//		 this(10);
+		this(2);
 		this.progressBar = progressBar;
 	}
 

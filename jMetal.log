@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2018-05-29T23:20:56</date>
-  <millis>1527632456910</millis>
+  <date>2018-05-30T13:46:09</date>
+  <millis>1527684369514</millis>
   <sequence>0</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
@@ -13,8 +13,8 @@
   <message>Loggers configured with null</message>
 </record>
 <record>
-  <date>2018-05-29T23:20:56</date>
-  <millis>1527632456925</millis>
+  <date>2018-05-30T13:46:09</date>
+  <millis>1527684369530</millis>
   <sequence>1</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
@@ -24,102 +24,79 @@
   <message>ExecuteAlgorithms: Preparing output directory</message>
 </record>
 <record>
-  <date>2018-05-29T23:20:56</date>
-  <millis>1527632456947</millis>
+  <date>2018-05-30T13:46:09</date>
+  <millis>1527684369558</millis>
   <sequence>2</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
   <class>org.uma.jmetal.util.experiment.util.ExperimentAlgorithm</class>
   <method>runAlgorithm</method>
   <thread>13</thread>
-  <message> Running algorithm: NSGAII, problem: MyProblemDoubleExternalViaJAR, run: 0, funFile: experimentBaseDirectory/ExperimentsDoubleExternalViaJAR/data/NSGAII/MyProblemDoubleExternalViaJAR/FUN0.tsv</message>
+  <message> Running algorithm: PAES, problem: MyProblemBinaryExternalViaJAR, run: 0, funFile: experimentBaseDirectory/ExperimentsBinaryExternalViaJAR/data/PAES/MyProblemBinaryExternalViaJAR/FUN0.tsv</message>
 </record>
 <record>
-  <date>2018-05-29T23:22:34</date>
-  <millis>1527632554882</millis>
+  <date>2018-05-30T13:46:09</date>
+  <millis>1527684369558</millis>
   <sequence>3</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
   <class>org.uma.jmetal.util.experiment.util.ExperimentAlgorithm</class>
   <method>runAlgorithm</method>
-  <thread>13</thread>
-  <message> Running algorithm: NSGAII, problem: MyProblemDoubleExternalViaJAR, run: 1, funFile: experimentBaseDirectory/ExperimentsDoubleExternalViaJAR/data/NSGAII/MyProblemDoubleExternalViaJAR/FUN1.tsv</message>
+  <thread>30</thread>
+  <message> Running algorithm: SMSEMOA, problem: MyProblemBinaryExternalViaJAR, run: 0, funFile: experimentBaseDirectory/ExperimentsBinaryExternalViaJAR/data/SMSEMOA/MyProblemBinaryExternalViaJAR/FUN0.tsv</message>
 </record>
 <record>
-  <date>2018-05-29T23:24:05</date>
-  <millis>1527632645462</millis>
+  <date>2018-05-30T13:46:09</date>
+  <millis>1527684369558</millis>
   <sequence>4</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
-  <class>org.uma.jmetal.util.experiment.component.ComputeQualityIndicators</class>
-  <method>run</method>
-  <thread>13</thread>
-  <message>Computing indicator: HV</message>
+  <class>org.uma.jmetal.util.experiment.util.ExperimentAlgorithm</class>
+  <method>runAlgorithm</method>
+  <thread>32</thread>
+  <message> Running algorithm: NSGAII, problem: MyProblemBinaryExternalViaJAR, run: 0, funFile: experimentBaseDirectory/ExperimentsBinaryExternalViaJAR/data/NSGAII/MyProblemBinaryExternalViaJAR/FUN0.tsv</message>
 </record>
 <record>
-  <date>2018-05-29T23:24:05</date>
-  <millis>1527632645464</millis>
+  <date>2018-05-30T13:46:09</date>
+  <millis>1527684369558</millis>
   <sequence>5</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
-  <class>org.uma.jmetal.util.experiment.component.ComputeQualityIndicators</class>
-  <method>run</method>
-  <thread>13</thread>
-  <message>RF: experimentBaseDirectory/referenceFronts/MyProblemDoubleExternalViaJAR.rf</message>
+  <class>org.uma.jmetal.util.experiment.util.ExperimentAlgorithm</class>
+  <method>runAlgorithm</method>
+  <thread>34</thread>
+  <message> Running algorithm: MOCell, problem: MyProblemBinaryExternalViaJAR, run: 0, funFile: experimentBaseDirectory/ExperimentsBinaryExternalViaJAR/data/MOCell/MyProblemBinaryExternalViaJAR/FUN0.tsv</message>
 </record>
 <record>
-  <date>2018-05-29T23:24:05</date>
-  <millis>1527632645470</millis>
+  <date>2018-05-30T13:46:09</date>
+  <millis>1527684369558</millis>
   <sequence>6</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
-  <class>org.uma.jmetal.util.experiment.component.ComputeQualityIndicators</class>
-  <method>resetFile</method>
-  <thread>13</thread>
-  <message>File experimentBaseDirectory/ExperimentsDoubleExternalViaJAR/data/NSGAII/MyProblemDoubleExternalViaJAR/HV exist.</message>
+  <class>org.uma.jmetal.util.experiment.util.ExperimentAlgorithm</class>
+  <method>runAlgorithm</method>
+  <thread>31</thread>
+  <message> Running algorithm: MOCH, problem: MyProblemBinaryExternalViaJAR, run: 0, funFile: experimentBaseDirectory/ExperimentsBinaryExternalViaJAR/data/MOCH/MyProblemBinaryExternalViaJAR/FUN0.tsv</message>
 </record>
 <record>
-  <date>2018-05-29T23:24:05</date>
-  <millis>1527632645471</millis>
-  <sequence>7</sequence>
-  <logger>org.uma.jmetal.util.JMetalLogger</logger>
-  <level>INFO</level>
-  <class>org.uma.jmetal.util.experiment.component.ComputeQualityIndicators</class>
-  <method>resetFile</method>
-  <thread>13</thread>
-  <message>File experimentBaseDirectory/ExperimentsDoubleExternalViaJAR/data/NSGAII/MyProblemDoubleExternalViaJAR/HV is a file. Deleting file.</message>
-</record>
-<record>
-  <date>2018-05-29T23:24:05</date>
-  <millis>1527632645473</millis>
+  <date>2018-05-30T13:46:09</date>
+  <millis>1527684369558</millis>
   <sequence>8</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
-  <class>org.uma.jmetal.util.experiment.component.ComputeQualityIndicators</class>
-  <method>resetFile</method>
-  <thread>13</thread>
-  <message>File succesfully deleted.</message>
+  <class>org.uma.jmetal.util.experiment.util.ExperimentAlgorithm</class>
+  <method>runAlgorithm</method>
+  <thread>37</thread>
+  <message> Running algorithm: RandomSearch, problem: MyProblemBinaryExternalViaJAR, run: 0, funFile: experimentBaseDirectory/ExperimentsBinaryExternalViaJAR/data/RandomSearch/MyProblemBinaryExternalViaJAR/FUN0.tsv</message>
 </record>
 <record>
-  <date>2018-05-29T23:24:05</date>
-  <millis>1527632645478</millis>
-  <sequence>9</sequence>
+  <date>2018-05-30T13:46:09</date>
+  <millis>1527684369558</millis>
+  <sequence>7</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
-  <class>org.uma.jmetal.util.experiment.component.ComputeQualityIndicators</class>
-  <method>run</method>
-  <thread>13</thread>
-  <message>HV: 0.21470301987927978</message>
+  <class>org.uma.jmetal.util.experiment.util.ExperimentAlgorithm</class>
+  <method>runAlgorithm</method>
+  <thread>33</thread>
+  <message> Running algorithm: SPEA2, problem: MyProblemBinaryExternalViaJAR, run: 0, funFile: experimentBaseDirectory/ExperimentsBinaryExternalViaJAR/data/SPEA2/MyProblemBinaryExternalViaJAR/FUN0.tsv</message>
 </record>
-<record>
-  <date>2018-05-29T23:24:05</date>
-  <millis>1527632645483</millis>
-  <sequence>10</sequence>
-  <logger>org.uma.jmetal.util.JMetalLogger</logger>
-  <level>INFO</level>
-  <class>org.uma.jmetal.util.experiment.component.ComputeQualityIndicators</class>
-  <method>run</method>
-  <thread>13</thread>
-  <message>HV: 0.2533053055172967</message>
-</record>
-</log>
